@@ -1,5 +1,5 @@
 <template>
-    <span v-if="mod && mod.getDonationLink() && extraRenderCondition" class="card-header-icon">
+    <span v-if="mod && mod.getDonationLink() && extraRenderCondition" class="nimbus-card__header-icon">
         <ExternalLink :url="mod.getDonationLink()" tag="span">
             <i class="fas fa-heart" v-tooltip.left="'Donate to the mod author'"></i>
         </ExternalLink>

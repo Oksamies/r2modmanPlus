@@ -15,21 +15,21 @@
                 </div>
             </template>
             <template v-slot:other-icons>
-                <span class='card-header-icon' v-if="isModDeprecated(key)">
+                <span class='nimbus-card__header-icon' v-if="isModDeprecated(key)">
                     <i class='fas fa-exclamation-triangle' v-tooltip.left="'This mod is potentially broken'"></i>
                 </span>
-                <span class='card-header-icon' v-if="key.isPinned() && !readOnly">
+                <span class='nimbus-card__header-icon' v-if="key.isPinned() && !readOnly">
                     <i class='fas fa-map-pin' v-tooltip.left="'Pinned on Thunderstore'"></i>
                 </span>
-                <span class='card-header-icon' v-if="key.getDonationLink() && !readOnly">
+                <span class='nimbus-card__header-icon' v-if="key.getDonationLink() && !readOnly">
                     <ExternalLink :url="key.getDonationLink()" target="external" tag="span">
                         <i class='fas fa-heart' v-tooltip.left="'Donate to the mod author'"></i>
                     </ExternalLink>
                 </span>
-                <span class='card-header-icon' v-if="isThunderstoreModInstalled(key) && !readOnly">
+                <span class='nimbus-card__header-icon' v-if="isThunderstoreModInstalled(key) && !readOnly">
                     <i class='fas fa-check' v-tooltip.left="'Mod already installed'"></i>
                 </span>
-                <span class='card-header-icon' v-if="key.getNsfwFlag()">
+                <span class='nimbus-card__header-icon' v-if="key.getNsfwFlag()">
                     <i class="fas fa-pause-circle" v-tooltip.left="'Mod marked as NSFW'"></i>
                 </span>
             </template>

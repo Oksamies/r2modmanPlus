@@ -52,8 +52,8 @@ const disabledOptions = computed(() => Object.values(SortLocalDisabledMods));
 
 <template>
     <div class="inherit-background-colour sticky-top sticky-top--search non-selectable">
-        <div class="is-shadowless is-square">
-            <div class="no-padding-left card-header-title">
+        <div class="nimbus-card nimbus-card--square">
+            <div class="nimbus-toolbar no-padding-left">
 
                 <div class="input-group input-group--flex margin-right">
                     <label for="installed-search" class="non-selectable">Search</label>

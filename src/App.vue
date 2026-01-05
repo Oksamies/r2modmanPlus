@@ -1,14 +1,17 @@
 <template>
-    <div>
-        <main>
-            <router-view v-if="visible"/>
-        </main>
+    <div id="app">
+        <router-view v-if="visible"/>
+        
+        <GameRunningModal :activeGame="store.state.activeGame" />
+        <ProfileManagementModal />
         <ErrorModal />
     </div>
 </template>
 
 <script lang="ts" setup>
 import 'bulma-steps/dist/js/bulma-steps.min.js';
+import GameRunningModal from './components/modals/GameRunningModal.vue';
+import ProfileManagementModal from './components/modals/ProfileManagementModal.vue';
 import ManagerSettings from './r2mm/manager/ManagerSettings';
 import ProfileProvider from './providers/ror2/model_implementation/ProfileProvider';
 import ProfileImpl from './r2mm/model_implementation/ProfileImpl';
@@ -151,8 +154,8 @@ html {
     overflow-y: auto;
 }
 
-main {
-    display: grid;
-    grid-template-rows: 100vh;
+#app {
+    height: 100%;
+    width: 100%;
 }
 </style>

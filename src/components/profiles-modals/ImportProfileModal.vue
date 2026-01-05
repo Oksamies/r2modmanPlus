@@ -367,7 +367,7 @@ function onContentOrPathNotSet() {
             <h2 class="modal-title">Packages to be installed</h2>
         </template>
         <template v-slot:body>
-            <div v-if="knownProfileMods.length === 0 || profileMods.unknown.length > 0" class="notification is-warning">
+            <div v-if="knownProfileMods.length === 0 || profileMods.unknown.length > 0" class="nimbus-notification nimbus-notification--warning">
                 <p>These packages in the profile were not found on Thunderstore and will not be installed:</p>
                 <p class="margin-top">{{ unknownProfileModNames }}</p>
 
@@ -385,7 +385,7 @@ function onContentOrPathNotSet() {
         </template>
         <template v-slot:footer>
 
-            <div v-if="knownProfileMods.length > 0 && profileMods.unknown.length > 0" class="is-flex-grow-1">
+            <div v-if="knownProfileMods.length > 0 && profileMods.unknown.length > 0" class="nimbus-spacer">
                 <input
                     v-model="isPartialImportAllowed"
                     id="partialImportAllowedCheckbox"
@@ -454,7 +454,7 @@ function onContentOrPathNotSet() {
             </span>
         </template>
         <template v-slot:body v-else-if="importUpdateSelection === 'UPDATE'">
-            <div class="notification is-warning">
+            <div class="nimbus-notification nimbus-notification--warning">
                 <p>All contents of the profile will be overwritten with the contents of the code/file.</p>
             </div>
             <p>Select a profile below:</p>

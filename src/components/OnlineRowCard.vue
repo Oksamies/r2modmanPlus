@@ -1,15 +1,15 @@
 <template>
     <keep-alive>
-        <div class='row-card is-shadowless' :class="[{'row-card--expanded': isSelected}]">
+        <div class='row-card nimbus-card' :class="[{'row-card--expanded': isSelected}]">
             <div class='cursor-pointer'>
-                <header class='card-header is-shadowless' :id='id'>
-                    <div class='card-header-icon mod-logo' v-if="image !== ''">
+                <header class='nimbus-card__header' :id='id'>
+                    <div class='nimbus-card__header-icon mod-logo' v-if="image !== ''">
                         <figure class='image is-48x48 image-parent'>
                             <img :src='image' alt='Mod Logo' class='image-overlap'/>
                             <img v-if="store.state.profile.funkyMode" src='../assets/funky_mode.png' alt='Mod Logo' class='image-overlap'/>
                         </figure>
                     </div>
-                    <span ref="title" class='card-header-title'><slot name='title'></slot></span>
+                    <span ref="title" class='nimbus-card__title'><slot name='title'></slot></span>
                     <slot name='other-icons'></slot>
                 </header>
             </div>
@@ -39,7 +39,7 @@ onMounted(async () => {
 
 
 <style lang="scss" scoped>
-.card-header-title {
+.nimbus-card__title {
     word-break: break-all;
 }
 </style>

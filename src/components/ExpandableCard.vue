@@ -1,22 +1,22 @@
 <template>
     <keep-alive>
         <div>
-            <div class='row-card is-shadowless' :class="[{'disabled-card': !enabled}, {'row-card--expanded': visible}]">
+            <div class='row-card nimbus-card' :class="[{'disabled-card': !enabled}, {'row-card--expanded': visible}]">
                 <div @click='toggleVisibility()' class='cursor-pointer'>
-                    <header class='card-header is-shadowless' :id='id'>
-                        <div class='card-header-icon mod-logo' v-if="image !== ''">
+                    <header class='nimbus-card__header' :id='id'>
+                        <div class='nimbus-card__header-icon mod-logo' v-if="image !== ''">
                             <figure class='image is-48x48 image-parent'>
                                 <img :src='image' alt='Mod Logo' class='image-overlap'/>
                                 <img v-if="store.state.profile.funkyMode" :src='ProtocolProvider.getPublicAssetUrl("/funky_mode.png")' alt='Funky mode' class='image-overlap'/>
                             </figure>
                         </div>
-                        <span ref="title" class='card-header-title'><slot name='title'></slot></span>
+                        <span ref="title" class='nimbus-card__title'><slot name='title'></slot></span>
                         <slot name='other-icons'></slot>
                         <!-- Allow movement of mod order -->
-                        <a v-if='showSort' class='card-header-icon handle'>
+                        <a v-if='showSort' class='nimbus-card__header-icon handle'>
                             <i class="fas fa-grip-vertical" v-tooltip.left="'Drag to reorder'"></i>
                         </a>
-                        <a class='card-header-icon'>
+                        <a class='nimbus-card__header-icon'>
                             <span class='icon'>
                                 <i class='fas fa-angle-right' aria-hidden='true' v-if='!visible' v-tooltip.left="'Expand'"></i>
                                 <i class='fas fa-angle-down' aria-hidden='true' v-if='visible' v-tooltip.left="'Collapse'"></i>
@@ -24,13 +24,13 @@
                         </a>
                     </header>
                 </div>
-                <div class='card-content' v-show='visible' v-if="description !== ''">
+                <div class='nimbus-card__content' v-show='visible' v-if="description !== ''">
                     <div class='content'>
                         <p ref="description">{{description}}</p>
                         <slot name='description'></slot>
                     </div>
                 </div>
-                <footer class='card-footer card-footer-borderless' v-show='visible' ref="footer">
+                <footer class='nimbus-card__footer nimbus-card__footer--borderless' v-show='visible' ref="footer">
                     <slot></slot>
                     <div class="is-divider"></div>
                 </footer>
@@ -81,7 +81,7 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.card-header-title {
+.nimbus-card__title {
     word-break: break-all;
 }
 </style>

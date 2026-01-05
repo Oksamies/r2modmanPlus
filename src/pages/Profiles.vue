@@ -1,63 +1,50 @@
 <template>
-  <div>
+  <div class="nimbus-scope container--full island">
     <CreateProfileModal />
     <DeleteProfileModal />
     <RenameProfileModal />
     <ImportProfileModal />
-    <!-- Content -->
-    <hero
-      title="Profile selection"
-      subtitle="Profiles help to organise mods easily"
-      heroType="primary"
-    />
-    <div class="columns">
-      <div class="column is-full">
-        <div>
-          <article class="media">
-            <div class="media-content">
-              <div class="content">
-                <div class='notification'>
-                    <div class="container">
-                        <i class='fas fa-long-arrow-alt-left margin-right' />
-                        <strong><a @click="backToGameSelection">Back to game selection</a></strong>
-                    </div>
-                </div>
-                <div v-for="(profileName) of profileList" :key="profileName">
-                  <a @click="setSelectedProfile(profileName, false)">
-                    <div class="container">
-                      <div class="border-at-bottom">
-                        <div class="card is-shadowless">
-                          <p
-                            :class="['card-header-title', {'has-text-info':activeProfileName === profileName}]"
-                          >{{profileName}}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </a>
-                </div>
+    <div class="island container--y container--full">
+      <div class="island-item">
+        <hero
+          title="Profile selection"
+          subtitle="Profiles help to organise mods easily"
+          heroType="primary"
+        />
+      </div>
+      <div class="island-item">
+        <div class="nimbus-stack">
+          <div class='nimbus-notification'>
+              <div class="nimbus-container nimbus-inline">
+                  <i class='fas fa-long-arrow-alt-left margin-right' />
+                  <strong><a @click="backToGameSelection">Back to game selection</a></strong>
               </div>
-                <div class="container">
-                  <nav class="level">
-                    <div class="level-item">
-                      <a id="select-profile" class="button is-info" @click="moveToNextScreen()">Select profile</a>
+          </div>
+          <div class="content">
+            <div v-for="(profileName) of profileList" :key="profileName">
+              <a @click="setSelectedProfile(profileName, false)">
+                <div class="nimbus-container">
+                  <div class="border-at-bottom">
+                    <div class="nimbus-card">
+                      <p
+                        :class="['nimbus-card__title', {'has-text-info':activeProfileName === profileName}]"
+                      >{{profileName}}</p>
                     </div>
-                      <div class="level-item">
-                          <a id="rename-profile-disabled" class="button" v-if="activeProfileName === 'Default'" :disabled="true">Rename</a>
-                          <a id="rename-profile" class="button" @click="openRenameProfileModal()" v-else>Rename</a>
-                      </div>
-                    <div class="level-item">
-                      <a id="create-profile" class="button" @click="openCreateProfileModal()">Create new</a>
-                    </div>
-                    <div class="level-item">
-                      <a class="button" @click="openImportProfileModal()">Import / Update</a>
-                    </div>
-                    <div class="level-item">
-                        <a class="button is-danger" @click="openDeleteProfileModal()">Delete</a>
-                    </div>
-                  </nav>
+                  </div>
                 </div>
-                </div>
-          </article>
+              </a>
+            </div>
+          </div>
+          <div class="nimbus-container">
+            <div class="nimbus-toolbar nimbus-toolbar--center">
+              <a id="select-profile" class="button is-info" @click="moveToNextScreen()">Select profile</a>
+              <a id="rename-profile-disabled" class="button" v-if="activeProfileName === 'Default'" :disabled="true">Rename</a>
+              <a id="rename-profile" class="button" @click="openRenameProfileModal()" v-else>Rename</a>
+              <a id="create-profile" class="button" @click="openCreateProfileModal()">Create new</a>
+              <a class="button" @click="openImportProfileModal()">Import / Update</a>
+              <a class="button is-danger" @click="openDeleteProfileModal()">Delete</a>
+            </div>
+          </div>
         </div>
       </div>
     </div>

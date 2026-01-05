@@ -38,9 +38,6 @@ select {
     }
 }
 
-.menu-list a.is-active {
-    color: $menu-item-active-color;
-}
 
 .pagination-link.is-current {
     background-color: $pagination-current-background-color;
@@ -50,33 +47,6 @@ select {
 
 .icon--margin-right {
     margin-right: 0.5em;
-}
-
-// custom
-.menu {
-    display: block;
-    padding: 1em 0 1em 1em;
-    position: sticky;
-    top: 0;
-
-    .tagged-link {
-
-        display: flex;
-        flex: 1;
-        align-items: center;
-
-        &__icon {
-            flex: 0;
-        }
-
-        &__content {
-            flex: 1;
-        }
-
-        &__tag {
-            flex: 0;
-        }
-    }
 }
 
 .sticky-top {
@@ -141,45 +111,9 @@ select {
     }
 }
 
-.card {
-    border: 0 !important;
-}
-
 .disabled-card {
-    .mod-logo, .card-title, .card-content {
+    .mod-logo, .card-title, .nimbus-card__content {
         opacity: 0.6;
-    }
-}
-
-.card-footer-borderless, .card-footer-borderless .card-footer-item {
-    border: none !important;
-    // these two lines allow the hover effect's pseudo-element to position itself behind the element's text, with a bit of a margin
-    position: relative;
-    z-index: 1;
-}
-
-.card-footer-item:not(.non-selectable) {
-
-    &::before {
-        content: "";
-        display: block;
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        width: calc(100% - 20px);
-        height: calc(100% - 20px);
-        z-index: -1;
-        background-color: transparent;
-        border: 1px solid $scheme-border-secondary;
-        border-radius: 4px;
-    }
-
-    &:hover, &:active, &:focus {
-        color: #ffffff;
-        &::before {
-            background-color: $scheme-primary;
-            border: 0;
-        }
     }
 }
 
@@ -217,10 +151,6 @@ select {
     width: 100%;
 }
 
-.card {
-    border-radius: 4px;
-}
-
 .is-square {
     border-radius: 0;
 }
@@ -233,9 +163,6 @@ select {
     }
 }
 
-.card-footer > .button {
-    margin: 0.5em 0 0.5em 0.5em;
-}
 
 .pagination {
     position: sticky !important;
@@ -295,9 +222,6 @@ select {
     }
 }
 
-.tabs {
-    margin-bottom: 0 !important;
-}
 
 .no-break {
     word-break: keep-all;
@@ -507,4 +431,53 @@ code {
     margin: 0;
     padding: 0;
     line-height: 2rem;
+}
+
+/* Layout Utilities from Cyberstorm Theme */
+:root {
+    --color-surface-2: #101028;
+    --radius-sm: 8px;
+    --gap-2xs: 4px;
+    --gap-xs: 8px;
+    --gap-sm: 12px;
+    --gap-md: 16px;
+    --gap-lg: 24px;
+
+    --section-bg: var(--color-surface-2);
+    --section-border-radius: var(--radius-sm);
+    --section-gap: var(--gap-xs);
+}
+
+/* CONTAINER, basically flex wrapper utility class */
+.container {
+    display: flex;
+    min-width: 0;
+    min-height: 0;
+}
+
+.container--x {
+    flex-direction: row;
+}
+
+.container--y {
+    flex-direction: column;
+}
+
+.container--full {
+    flex: 1;
+}
+
+.container--stretch {
+    align-self: stretch;
+}
+
+/* ISLANDS, visual helper classes for islands */
+.island {
+    display: flex;
+    gap: var(--section-gap);
+}
+
+.island-item {
+    border-radius: var(--section-border-radius);
+    background-color: var(--section-bg);
 }

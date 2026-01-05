@@ -72,3 +72,19 @@ ipcMain.on('get-statics-directory', (event) => {
     const __dirname = path.dirname(__filename);
     event.returnValue = __dirname;
 });
+
+ipcMain.on('window:minimize', () => {
+    browserWindow.minimize();
+});
+
+ipcMain.on('window:maximize', () => {
+    if (browserWindow.isMaximized()) {
+        browserWindow.unmaximize();
+    } else {
+        browserWindow.maximize();
+    }
+});
+
+ipcMain.on('window:close', () => {
+    browserWindow.close();
+});

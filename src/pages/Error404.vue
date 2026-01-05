@@ -1,5 +1,5 @@
 <template>
-  <div class="fixed-center text-center">
+  <div class="nimbus-scope fixed-center text-center">
     <p>
       <img
         src="~assets/sad.svg"
@@ -7,12 +7,9 @@
       >
     </p>
     <p class="text-faded">Sorry, nothing here...<strong>(404)</strong></p>
-    <q-btn
-      color="secondary"
-      style="width:200px;"
-      to="/"
-      label="Go back"
-    />
+    <router-link class="button is-info" style="width:200px;" to="/">
+      Go back
+    </router-link>
   </div>
 </template>
 

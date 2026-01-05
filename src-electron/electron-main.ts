@@ -46,6 +46,7 @@ async function createWindow() {
         useContentSize: true,
         icon: path.resolve(__dirname, 'icons/icon.png'),
         autoHideMenuBar: process.env.PROD,
+        frame: false,
         webPreferences: {
             preload: path.resolve(
                 fileURLToPath(new URL('.', import.meta.url)),

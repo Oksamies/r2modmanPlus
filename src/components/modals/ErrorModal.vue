@@ -20,7 +20,7 @@ function close() {
     <div v-if="error !== null" id="errorModal" class="modal z-top is-active">
         <div class="modal-background" @click="close"></div>
         <div class="modal-content">
-            <div class="notification is-danger">
+            <div class="nimbus-notification nimbus-notification--danger">
                 <h3 class="title">Error</h3>
                 <h5 class="title is-5">{{name}}</h5>
                 <p>{{message}}</p>

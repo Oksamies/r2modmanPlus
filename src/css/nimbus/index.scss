@@ -1,0 +1,11 @@
+// Nimbus foundation (ported from thunderstore-ui) + r2modmanPlus-specific shims.
+// Kept isolated under src/css/nimbus/ for easy review/removal.
+
+@use "./upstream/cyberstorm-theme/colors";
+@use "./upstream/cyberstorm-theme/globals";
+
+@use "./typography";
+@use "./layout";
+@use "./islands";
+@use "./components";
+@use "./bulma-bridge";

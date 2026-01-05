@@ -1,31 +1,37 @@
 <template>
     <div id="download-monitor-view">
         <Hero title="Downloads" subtitle="Monitor progress of downloads" hero-type="primary"/>
-        <template v-if="store.state.download.allDownloads.length === 0">
-            <div class='text-center top'>
-                <div class="margin-right">
-                    <br/>
-                    <h3 class='title is-4'>You don't have anything downloading.</h3>
-                    <h4 class='subtitle is-5'>
-                        Click <router-link :to="{name: 'manager.online'}">here</router-link> to download something.
-                    </h4>
+        <div class="island container--y nimbus-scope">
+            <template v-if="store.state.download.allDownloads.length === 0">
+                <div class="island-item">
+                    <div class='text-center top'>
+                        <div class="margin-right">
+                            <br/>
+                            <h3 class='title is-4'>You don't have anything downloading.</h3>
+                            <h4 class='subtitle is-5'>
+                                Click <router-link :to="{name: 'manager.online'}">here</router-link> to download something.
+                            </h4>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </template>
-        <template v-else>
-            <div class="download-monitor-action-buttons border-at-bottom">
-                <button
-                    class="button ghost"
-                    @click="store.commit('download/removeAllInactive')"
-                >
-                    <i class="fas fa-times mr-2" />Clear finished
-                </button>
-            </div>
-            <div v-for="(downloadObject, index) of store.getters['download/profileDownloadsNewestFirst']" :key="`download-progress-${index}`">
-                <div class="container">
-                    <div class="row no-wrap border-at-bottom pad pad--sides">
-                        <div class="is-flex-grow-1 margin-right card is-shadowless">
-                            <p><strong>{{ downloadObject.initialMods.map(tsCombo => tsCombo.getUserFriendlyString()).join(", ") }}</strong></p>
+            </template>
+            <template v-else>
+                <div class="island-item">
+                    <div class="download-monitor-action-buttons border-at-bottom">
+                        <button
+                            class="button ghost"
+                            @click="store.commit('download/removeAllInactive')"
+                        >
+                            <i class="fas fa-times mr-2" />Clear finished
+                        </button>
+                    </div>
+                </div>
+                <div class="island-item">
+                    <div v-for="(downloadObject, index) of store.getters['download/profileDownloadsNewestFirst']" :key="`download-progress-${index}`">
+                        <div class="nimbus-container">
+                            <div class="row no-wrap border-at-bottom pad pad--sides">
+                                <div class="nimbus-spacer margin-right nimbus-card nimbus-card--flush">
+                                    <p><strong>{{ downloadObject.initialMods.map(tsCombo => tsCombo.getUserFriendlyString()).join(", ") }}</strong></p>
 
                             <div class="row" v-if="downloadObject.status === DownloadStatusEnum.FAILED">
                                 <div class="col">
@@ -114,27 +120,29 @@
                                 </div>
 
                             </div>
+                                </div>
+                                <button
+                                    v-if="downloadObject.status === DownloadStatusEnum.FAILED"
+                                    class="button download-item-action-button"
+                                    v-tooltip.left="'Retry'"
+                                    @click="store.dispatch('download/retryDownload', { download: downloadObject, hideModal: true })"
+                                >
+                                    <i class="fas fa-redo redo-icon" />
+                                </button>
+                                <button
+                                    v-if="downloadObject.status === DownloadStatusEnum.FAILED || downloadObject.status === DownloadStatusEnum.INSTALLED"
+                                    class="button download-item-action-button"
+                                    v-tooltip.left="'Remove'"
+                                    @click="store.commit('download/removeDownload', downloadObject)"
+                                >
+                                    <i class="fas fa-times x-icon" />
+                                </button>
+                            </div>
                         </div>
-                        <button
-                            v-if="downloadObject.status === DownloadStatusEnum.FAILED"
-                            class="button download-item-action-button"
-                            v-tooltip.left="'Retry'"
-                            @click="store.dispatch('download/retryDownload', { download: downloadObject, hideModal: true })"
-                        >
-                            <i class="fas fa-redo redo-icon" />
-                        </button>
-                        <button
-                            v-if="downloadObject.status === DownloadStatusEnum.FAILED || downloadObject.status === DownloadStatusEnum.INSTALLED"
-                            class="button download-item-action-button"
-                            v-tooltip.left="'Remove'"
-                            @click="store.commit('download/removeDownload', downloadObject)"
-                        >
-                            <i class="fas fa-times x-icon" />
-                        </button>
                     </div>
                 </div>
-            </div>
-        </template>
+            </template>
+        </div>
     </div>
 </template>
 

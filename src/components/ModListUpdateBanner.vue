@@ -24,7 +24,7 @@ function openErrorModal() {
 
 <template>
     <div v-if="!isModListLoaded" id="mod-list-update-banner" class="margin-bottom">
-        <div class="notification is-warning margin-right">
+        <div class="nimbus-notification nimbus-notification--warning margin-right">
             <span v-if="isUpdateInProgress">
                 {{ store.state.tsMods.thunderstoreModListUpdateStatus }}
             </span>

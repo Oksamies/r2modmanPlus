@@ -23,7 +23,7 @@ function closeModal() {
         >
             <div class="modal-background" @click="closeModal();"></div>
             <div class='modal-content'>
-                <div class='notification is-info'>
+                <div class='nimbus-notification nimbus-notification--info'>
 
                     <h3 v-if="DownloadUtils.statusIsDownloadOrExtract(store.getters['download/currentDownload'].status)" class='title'>
                         Downloading {{store.getters['download/currentDownload'].modName}}

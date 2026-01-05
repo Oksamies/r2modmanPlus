@@ -1,0 +1,37 @@
+@layer nimbus-layout {
+  :root {
+    --nimbus-section-bg: #14142e;
+    --nimbus-section-border-radius: 8px;
+    --nimbus-section-gap: 4px;
+    --nimbus-section-padding: var(--gap-md);
+    --nimbus-section-border: none;
+  }
+
+  /* Nimbus-style islands (prefixed to avoid conflicts with Bulma's `.container`). */
+  .nimbus-island {
+    display: flex;
+    gap: var(--nimbus-section-gap);
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .nimbus-island--row {
+    flex-direction: row;
+  }
+
+  .nimbus-island--column {
+    flex-direction: column;
+  }
+
+  .nimbus-island-item {
+    border-radius: var(--nimbus-section-border-radius);
+    background-color: var(--nimbus-section-bg);
+    border: var(--nimbus-section-border);
+    min-width: 0;
+    min-height: 0;
+  }
+
+  .nimbus-island-item--padded {
+    padding: var(--nimbus-section-padding);
+  }
+}

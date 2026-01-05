@@ -9,27 +9,27 @@
             <p>It's recommended to select the latest version of all mods.</p>
             <p>Using outdated versions may cause problems.</p>
             <br/>
-            <div class="columns is-vcentered">
+            <div class="nimbus-toolbar">
                 <template v-if="currentVersion !== null">
-                    <div class="column is-narrow">
+                    <div class="nimbus-toolbar__group">
                         <select class="select" disabled="true">
                             <option selected>
                                 {{currentVersion}}
                             </option>
                         </select>
                     </div>
-                    <div class="column is-narrow">
+                    <div class="nimbus-toolbar__group">
                         <span class="margin-right margin-right--half-width"><span class="margin-right margin-right--half-width"/> <i class='fas fa-long-arrow-alt-right'></i></span>
                     </div>
                 </template>
-                <div class="column is-narrow">
+                <div class="nimbus-toolbar__group">
                     <select class='select' v-model="selectedVersion">
                         <option v-for='(value, index) in versionNumbers' :key='index' :value='value'>
                             {{value}}
                         </option>
                     </select>
                 </div>
-                <div class="column is-narrow">
+                <div class="nimbus-toolbar__group">
                     <span class="tag is-dark" v-if='selectedVersion === null'>
                         You need to select a version
                     </span>

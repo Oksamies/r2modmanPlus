@@ -65,15 +65,15 @@ function onClose() {
             <h2 class='modal-title'>Uninstalling {{mod.getName()}}</h2>
         </template>
         <template v-slot:body>
-            <div class="max-height-100 is-flex is-flex-direction-column">
-                <div class='notification is-warning'>
+            <div class="nimbus-stack max-height-100">
+                <div class='nimbus-notification nimbus-notification--warning'>
                     <p>
                         Other mods depend on this mod. Select <strong>Uninstall all</strong>
                         to uninstall dependent mods, otherwise they may cause errors.
                     </p>
                 </div>
                 <h3 class="subtitle mb-3">Mods to be uninstalled</h3>
-                <div class="is-flex-shrink-1 overflow-auto code-snippet">
+                <div class="nimbus-flex-shrink overflow-auto code-snippet">
                     <ul class="list">
                         <li class="list-item">{{mod.getName()}}</li>
                         <li class="list-item" v-for='(mod) in dependants'
@@ -104,5 +104,8 @@ function onClose() {
 </template>
 
 <style scoped lang="scss">
-
+.nimbus-flex-shrink {
+    flex-shrink: 1;
+    min-height: 0;
+}
 </style>

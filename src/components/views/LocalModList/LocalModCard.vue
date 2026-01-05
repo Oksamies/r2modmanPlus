@@ -224,18 +224,18 @@ function dependencyStringToModName(x: string) {
             <DonateIconButton :mod="tsMod" v-if="tsMod"/>
             <span v-if="!isLatestVersion"
                 @click.prevent.stop="updateMod()"
-                class='card-header-icon'>
+                class='nimbus-card__header-icon'>
                 <i class='fas fa-cloud-upload-alt' v-tooltip.left="'An update is available'"></i>
             </span>
             <span v-if="disabledDependencies.length || missingDependencies.length"
-                class='card-header-icon'>
+                class='nimbus-card__header-icon'>
                 <i v-tooltip.left="`There is an issue with the dependencies for this mod`"
                     class='fas fa-exclamation-circle'
                 ></i>
             </span>
             <span v-if="canBeDisabled"
                 @click.prevent.stop="() => mod.isEnabled() ? disableMod() : enableMod(mod)"
-                class='card-header-icon'>
+                class='nimbus-card__header-icon'>
                 <div class="field">
                     <input :id="`switch-${mod.getName()}`"
                         type="checkbox"
@@ -248,39 +248,39 @@ function dependencyStringToModName(x: string) {
         </template>
 
         <!-- Show bottom button row -->
-        <a @click="uninstallMod()" class='card-footer-item'>
+        <a @click="uninstallMod()" class='nimbus-card__footer-item'>
             Uninstall
         </a>
 
-        <a v-if="canBeDisabled && mod.isEnabled()" @click="disableMod()" class='card-footer-item'>
+        <a v-if="canBeDisabled && mod.isEnabled()" @click="disableMod()" class='nimbus-card__footer-item'>
             Disable
         </a>
-        <a v-else-if="canBeDisabled && !mod.isEnabled()" @click="enableMod(mod)" class='card-footer-item' >
+        <a v-else-if="canBeDisabled && !mod.isEnabled()" @click="enableMod(mod)" class='nimbus-card__footer-item' >
             Enable
         </a>
 
-        <a @click="viewAssociatedMods()" class='card-footer-item'>
+        <a @click="viewAssociatedMods()" class='nimbus-card__footer-item'>
             Associated
         </a>
 
-        <ExternalLink :url="mod.getWebsiteUrl()" class="card-footer-item">
+        <ExternalLink :url="mod.getWebsiteUrl()" class="nimbus-card__footer-item">
             Website
             <i class="fas fa-external-link-alt margin-left margin-left--half-width"></i>
         </ExternalLink>
 
-        <a v-if="!isLatestVersion" @click="updateMod()" class='card-footer-item'>
+        <a v-if="!isLatestVersion" @click="updateMod()" class='nimbus-card__footer-item'>
             Update
         </a>
 
         <a v-if="missingDependencies.length"
             @click="downloadDependency(missingDependencies[0])"
-            class='card-footer-item'>
+            class='nimbus-card__footer-item'>
             Download dependency
         </a>
 
         <a v-if="disabledDependencies.length"
             @click="enableMod(disabledDependencies[0])"
-            class='card-footer-item'>
+            class='nimbus-card__footer-item'>
             Enable {{disabledDependencies[0].getDisplayName()}}
         </a>
 

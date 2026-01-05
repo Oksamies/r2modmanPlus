@@ -4,7 +4,7 @@
             <button class="button is-info margin-right margin-right--half-width" @click="save">Save</button>
             <button class="button is-danger" @click="cancel">Cancel</button>
         </div>
-        <div id="config-raw-editor-component-wrapper" class="notification margin-right">
+        <div id="config-raw-editor-component-wrapper" class="nimbus-notification margin-right">
             <QuillEditor
                 :modelValue="fileText"
                 @update:modelValue="quillEditorValueUpdated"/>

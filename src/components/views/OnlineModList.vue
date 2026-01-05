@@ -26,7 +26,7 @@
             </template>
             <template v-slot:other-icons>
                 <DonateIconButton :mod="key" :extraRenderCondition="!readOnly" v-if="key"/>
-                <span class='card-header-icon' v-if="isThunderstoreModInstalled(key) && !readOnly">
+                <span class='nimbus-card__header-icon' v-if="isThunderstoreModInstalled(key) && !readOnly">
                     <i class='fas fa-check' v-tooltip.left="'Mod already installed'"></i>
                 </span>
             </template>
@@ -34,17 +34,17 @@
                 <p class='card-timestamp'><strong>Last updated:</strong> {{getReadableDate(key.getDateUpdated())}}</p>
                 <p class='card-timestamp'><strong>Categories:</strong> {{getReadableCategories(key)}}</p>
             </template>
-            <a class='card-footer-item' v-if="!readOnly" @click='showDownloadModal(key)'>Download</a>
-            <ExternalLink :url="key.getPackageUrl()" class='card-footer-item'>
+            <a class='nimbus-card__footer-item' v-if="!readOnly" @click='showDownloadModal(key)'>Download</a>
+            <ExternalLink :url="key.getPackageUrl()" class='nimbus-card__footer-item'>
                 Website <i class="fas fa-external-link-alt margin-left margin-left--half-width"></i>
             </ExternalLink>
             <template v-if="!readOnly">
                 <DonateButton :mod="key"/>
             </template>
-            <div class='card-footer-item non-selectable'>
+            <div class='nimbus-card__footer-item non-selectable'>
                 <span><i class='fas fa-download'/> {{key.getDownloadCount()}}</span>
             </div>
-            <div class='card-footer-item non-selectable'>
+            <div class='nimbus-card__footer-item non-selectable'>
                 <span><i class='fas fa-thumbs-up'/> {{key.getRating()}}</span>
             </div>
         </ExpandableCard>

@@ -25,7 +25,7 @@ function close() {
     <div id="gameRunningModal" :class="['modal', {'is-active': isOpen}]">
         <div class="modal-background" @click="close"></div>
         <div class="modal-content">
-            <div class='notification is-info'>
+            <div class='nimbus-notification nimbus-notification--info'>
                 <h3 class="title" v-if="isSteamGame">{{ activeGame.displayName }} is launching via Steam</h3>
                 <h3 class="title" v-else>{{ activeGame.displayName }} is starting</h3>
                 <h5 class="title is-5">Close this message to continue modding.</h5>

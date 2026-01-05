@@ -233,6 +233,15 @@ export default class ManagerSettings {
         await this.save();
     }
 
+    public getShowSidebar(): boolean {
+        return ManagerSettings.CONTEXT.global.showSidebar ?? true;
+    }
+
+    public async setShowSidebar(show: boolean) {
+        ManagerSettings.CONTEXT.global.showSidebar = show;
+        await this.save();
+    }
+
     public logActiveGameInDexieStore() {
         console.debug(`Active game in Dexie store: "${ManagerSettings.DEXIE_STORE.activeGame.settingsIdentifier}".`);
     }

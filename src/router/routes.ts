@@ -7,36 +7,36 @@ const profileTitle = () => `${appTitle()} - ${Profile.getActiveProfile().getProf
 
 const routes: RouteRecordRaw[] = [
     {
-        name: 'index',
-        path: '/',
-        component: () => import("pages/GameSelectionScreen.vue"),
-        meta: {title: appTitle}
-    },
-    {
-        name: 'splash',
-        path: '/splash/',
-        component: () => import('pages/Splash.vue'),
-        meta: {title: appTitle}
-    },
-    {
-        name: 'linux',
-        path: '/linux-native-game-setup/',
-        component: () => import('pages/LinuxNativeGameSetup.vue'),
-        meta: {
-            title: () => ManagerInformation.APP_NAME
-        }
-    },
-    {
-        name: 'profiles',
-        path: '/profiles/',
-        component: () => import('pages/Profiles.vue'),
-        meta: {title: appTitle}
-    },
-    {
         path: '/',
         component: () => import('components/navigation/NavigationLayout.vue'),
         meta: {title: appTitle},
         children: [
+            {
+                name: 'index',
+                path: '',
+                component: () => import("pages/GameSelectionScreen.vue"),
+                meta: {title: appTitle}
+            },
+            {
+                name: 'splash',
+                path: 'splash/',
+                component: () => import('pages/Splash.vue'),
+                meta: {title: appTitle}
+            },
+            {
+                name: 'linux',
+                path: 'linux-native-game-setup/',
+                component: () => import('pages/LinuxNativeGameSetup.vue'),
+                meta: {
+                    title: () => ManagerInformation.APP_NAME
+                }
+            },
+            {
+                name: 'profiles',
+                path: 'profiles/',
+                component: () => import('pages/Profiles.vue'),
+                meta: {title: appTitle}
+            },
             {
                 name: 'manager',
                 path: 'manager/',

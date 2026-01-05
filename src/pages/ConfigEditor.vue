@@ -1,7 +1,11 @@
 <template>
     <div id="config-editor">
-        <ConfigSelectionLayout v-show="editing === null" @edit="bindEdit($event)"/>
-        <ConfigEditLayout :config-file="editing" @changed="editing = null" v-if="editing"/>
+        <div class="island container--y nimbus-scope">
+            <div class="island-item">
+                <ConfigSelectionLayout v-show="editing === null" @edit="bindEdit($event)"/>
+                <ConfigEditLayout :config-file="editing" @changed="editing = null" v-if="editing"/>
+            </div>
+        </div>
     </div>
 </template>
 

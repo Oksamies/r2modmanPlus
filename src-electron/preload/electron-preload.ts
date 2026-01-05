@@ -30,3 +30,15 @@ export async function selectFileDialog(options: any) {
 export function copyToClipboard(value: string) {
     ipcRenderer.sendSync('electron:clipboard:copyText', value);
 }
+
+export function minimize() {
+    ipcRenderer.send('window:minimize');
+}
+
+export function maximize() {
+    ipcRenderer.send('window:maximize');
+}
+
+export function close() {
+    ipcRenderer.send('window:close');
+}

@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<SettingsItemProps>(), {
     action: '',
     description: '',
     icon: '',
-    value: Promise.resolve
+    value: () => Promise.resolve(null)
 });
 
 const emits = defineEmits<{
@@ -50,14 +50,77 @@ function emitClick() {
 </script>
 
 <template>
-    <a class="panel-block is-block settings-panel" @click="emitClick()">
-        <span class="icon is-pulled-right">
-            <i :class="['fas', icon]" aria-hidden="true"></i>
-        </span>
-        <div class="settings-panel__content">
-            <p class="title is-6 is-marginless">{{action}}</p>
-            <p class="subtitle is-italic is-bold is-6 is-marginless">{{description}}</p>
-            <p class="subtitle is-6 text-grey" v-if="reactiveValue !== null">{{reactiveValue}}</p>
+    <div class="settings-item" @click="emitClick()">
+        <div class="settings-item__content">
+            <div class="settings-item__header">
+                <span class="settings-item__title">{{ action }}</span>
+            </div>
+            <p class="settings-item__description">{{ description }}</p>
+            <p class="settings-item__value" v-if="reactiveValue !== null">{{ reactiveValue }}</p>
         </div>
-    </a>
+        <div class="settings-item__action">
+            <i :class="['fas', icon || 'fa-chevron-right']" aria-hidden="true"></i>
+        </div>
+    </div>
 </template>
+
+<style lang="scss" scoped>
+.settings-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #111120;
+    border: 1px solid #252535;
+    border-radius: 4px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+    margin-bottom: 8px;
+
+    &:hover {
+        background: #18182a;
+        border-color: #353545;
+    }
+
+    &__content {
+        flex: 1;
+        margin-right: 16px;
+        overflow: hidden;
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 4px;
+    }
+
+    &__title {
+        color: #e2e2e2;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    &__description {
+        color: #9e9e9e;
+        font-size: 12px;
+        line-height: 1.4;
+        margin: 0 0 4px 0;
+    }
+
+    &__value {
+        color: #3273dc;
+        font-size: 12px;
+        font-family: monospace;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__action {
+        color: #5e5e5e;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+}
+</style>

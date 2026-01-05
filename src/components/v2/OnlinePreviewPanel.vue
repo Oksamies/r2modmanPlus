@@ -180,7 +180,7 @@ function dragEnd(event: DragEvent) {
 </script>
 
 <template>
-    <div class="c-panel-window">
+    <div class="c-panel-window nimbus-scope">
         <div class="c-drag-pane" @drag.prevent.stop="resizeDebounce" @dragstart="dragStart" @dragend="dragEnd" draggable="true">
             <i class="fas fa-grip-lines-vertical drag-item"></i>
         </div>
@@ -197,7 +197,7 @@ function dragEnd(event: DragEvent) {
                 </h2>
                 <details id="package-preview-details" open="true">
                     <summary class='card-timestamp non-selectable'>Package information</summary>
-                    <div class="notification is-warning margin-top" v-if="isNsfw">
+                    <div class="nimbus-notification nimbus-notification--warning margin-top" v-if="isNsfw">
                         <p>This mod may contain potentially explicit material</p>
                     </div>
                     <div class="margin-top margin-bottom">
@@ -215,7 +215,7 @@ function dragEnd(event: DragEvent) {
                     <ExternalLink tag="button" class="button" :url="props.mod.getPackageUrl()">View online</ExternalLink>
                     <ExternalLink v-if="props.mod.getDonationLink()" tag="button" class="button" :url="props.mod.getDonationLink()">Donate</ExternalLink>
                 </div>
-                <div class="tabs margin-top">
+                <div class="nimbus-tabs margin-top">
                     <ul>
                         <li :class="{'is-active': activeTab === 'README'}"><a @click="setActiveTab('README')">README</a></li>
                         <li :class="{'is-active': activeTab === 'CHANGELOG'}"><a @click="setActiveTab('CHANGELOG')">CHANGELOG</a></li>
@@ -225,8 +225,8 @@ function dragEnd(event: DragEvent) {
             </div>
             <div class="c-preview-panel__content">
                 <template v-if="loadingPanel">
-                    <div class="notification">
-                        <div class="container">
+                    <div class="nimbus-notification">
+                        <div class="nimbus-inline">
                             <p>Fetching {{ activeTab }} for {{ props.mod.getFullName() }}</p>
                         </div>
                     </div>
@@ -236,8 +236,8 @@ function dragEnd(event: DragEvent) {
                         <OnlineModList :paged-mod-list="dependencies" :read-only="true" />
                     </template>
                     <template v-else>
-                        <div class="notification">
-                            <div class="container">
+                        <div class="nimbus-notification">
+                            <div class="nimbus-inline">
                                 <p>{{ props.mod.getName() }} has no dependencies</p>
                             </div>
                         </div>
@@ -245,7 +245,7 @@ function dragEnd(event: DragEvent) {
                 </template>
                 <template v-else-if="activeTab === 'README'">
                     <template v-if="readmeError !== null">
-                        <div class="notification is-danger">
+                        <div class="nimbus-notification nimbus-notification--danger">
                             <h2 class="title is-6">Unable to fetch README for {{ props.mod.getFullName() }}</h2>
                             <p>{{ readmeError.message }}</p>
                         </div>
@@ -256,7 +256,7 @@ function dragEnd(event: DragEvent) {
                 </template>
                 <template v-else-if="activeTab === 'CHANGELOG'">
                     <template v-if="changelogError !== null">
-                        <div class="notification is-danger">
+                        <div class="nimbus-notification nimbus-notification--danger">
                             <h2 class="title is-6">Unable to fetch CHANGELOG for {{ props.mod.getFullName() }}</h2>
                             <p>{{ changelogError.message }}</p>
                         </div>

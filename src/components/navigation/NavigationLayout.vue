@@ -1,42 +1,53 @@
 <template>
-    <div id="content">
-        <div class="nav-column non-selectable">
-            <NavigationMenu />
+    <div class="app-root">
+        <NavigationHeader />
+        <div class="app-body island">
+            <aside class="app-sidebar non-selectable">
+                <NavigationMenu />
+            </aside>
+            <main class="app-content island">
+                <router-view />
+            </main>
         </div>
-        <div class="content-column">
-            <router-view />
-        </div>
-        <GameRunningModal :activeGame="store.state.activeGame" />
-        <ProfileManagementModal />
+        <NavigationFooter />
     </div>
 </template>
 
 <script lang="ts" setup>
-
+import NavigationHeader from './NavigationHeader.vue';
 import NavigationMenu from './NavigationMenu.vue';
-import GameRunningModal from '../modals/GameRunningModal.vue';
-import ProfileManagementModal from '../modals/ProfileManagementModal.vue';
-import { getStore } from '../../providers/generic/store/StoreProvider';
-import { State } from '../../store';
-
-const store = getStore<State>();
-
+import NavigationFooter from './NavigationFooter.vue';
 </script>
 
-<style>
-.content-column {
-    display: flex;
-    flex: 1;
-    padding: 0;
-    margin-left: 0.75rem;
+<style lang="scss">
+.app-root {
+    height: 100vh;
+    width: 100vw;
     overflow: hidden;
-    overflow-y: auto;
-    width: 100%;
+    background-color: #050510;
+    display: flex;
+    flex-direction: column;
 }
 
-#content {
-    padding: 0;
-    max-width: 100vw;
+.app-body {
+    overflow: hidden;
+    padding: 4px 4px; /* Horizontal padding for body */    flex: 1;}
+
+.app-sidebar {
+    width: auto;
+    background-color: transparent;
     display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.app-content {
+    overflow-y: auto;
+    position: relative;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 </style>
+

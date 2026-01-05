@@ -4,7 +4,7 @@
 
         <div v-if="phase > PHASES.ERROR_STATES" class="modal z-top is-active">
             <div class="modal-content">
-                <div class="notification is-danger">
+                <div class="nimbus-notification nimbus-notification--danger">
                     <h3 class="title">Error</h3>
                     <h5 class="title is-5">{{error && error.name}}</h5>
                     <p>{{error && error.message}}</p>

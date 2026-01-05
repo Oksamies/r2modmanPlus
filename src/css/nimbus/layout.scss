@@ -1,0 +1,56 @@
+@layer nimbus-layout {
+  /* Lightweight layout primitives to help migrate away from Bulma structures.
+   * Prefixed to avoid collisions with existing utility class names.
+   */
+  .nimbus-stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-md, 1rem);
+    min-width: 0;
+  }
+
+  .nimbus-inline {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--gap-sm, 0.5rem);
+    min-width: 0;
+  }
+
+  .nimbus-toolbar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--gap-sm, 0.5rem);
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+
+  .nimbus-toolbar--center {
+    justify-content: center;
+  }
+
+  .nimbus-toolbar__group {
+    display: flex;
+    align-items: center;
+    gap: var(--gap-sm, 0.5rem);
+    min-width: 0;
+  }
+
+  .nimbus-toolbar__grow {
+    flex: 1;
+    min-width: 14rem;
+  }
+
+  .nimbus-container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    min-width: 0;
+  }
+
+  .nimbus-spacer {
+    flex: 1;
+    min-width: 0;
+  }
+}

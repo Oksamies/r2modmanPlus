@@ -6,16 +6,14 @@
                 subtitle="Select a configuration file to edit"
                 hero-type="primary"
             />
-            <div class="notification is-warning is-square">
-                <div class="container">
-                    <p>
-                        Configuration files are generated after launching the game, with the mod installed, at least
-                        once.
-                    </p>
-                </div>
+            <div class="nimbus-notification nimbus-notification--warning nimbus-notification--square">
+                <p>
+                    Configuration files are generated after launching the game, with the mod installed, at least
+                    once.
+                </p>
             </div>
-            <div class='is-shadowless'>
-                <div class='no-padding-left card-header-title'>
+            <div class='nimbus-card'>
+                <div class='nimbus-toolbar no-padding-left'>
 
                     <div class="input-group input-group--flex margin-right">
                         <label for="config-search" class="non-selectable">Search</label>
@@ -59,9 +57,9 @@
                     <template v-slot:title>
                         <span>{{ file.getName() }}</span>
                     </template>
-                    <a class='card-footer-item' @click="editConfig(file)">Edit Config</a>
-                    <a class='card-footer-item' @click="openConfig(file)">Open File</a>
-                    <a class='card-footer-item' @click="deleteConfig(file)">Delete</a>
+                    <a class='nimbus-card__footer-item' @click="editConfig(file)">Edit Config</a>
+                    <a class='nimbus-card__footer-item' @click="openConfig(file)">Open File</a>
+                    <a class='nimbus-card__footer-item' @click="deleteConfig(file)">Delete</a>
                 </ExpandableCard>
             </div>
         </div>

@@ -1,33 +1,40 @@
 <template>
-    <div class="pane">
-        <div class="search-and-sort">
-            <SearchAndSort />
-        </div>
-        <DisableModModal />
-        <UninstallModModal />
-        <AssociatedModsModal />
+    <div class="pane nimbus-scope">
+        <div class="island container--y">
+            <div class="island-item" id="controls">
+                <div class="search-and-sort">
+                    <SearchAndSort />
+                </div>
+            </div>
 
-        <slot name="above-list"></slot>
+            <DisableModModal />
+            <UninstallModModal />
+            <AssociatedModsModal />
 
-        <div class="mod-list-content">
-            <div class="draggable-content">
-                <draggable v-model='draggableList'
-                           group="local-mods"
-                           handle=".handle"
-                           @start="drag=store.getters['profile/canSortMods']"
-                           @end="drag=false"
-                           :force-fallback="true"
-                           :scroll-sensitivity="100"
-                           item-key="id">
-                    <template #item="{element}">
-                        <local-mod-card
-                            :mod="element" />
-                    </template>
-                </draggable>
+            <div class="island-item" id="content">
+                <slot name="above-list"></slot>
+
+                <div class="mod-list-content">
+                    <div class="draggable-content">
+                        <draggable v-model='draggableList'
+                                   group="local-mods"
+                                   handle=".handle"
+                                   @start="drag=store.getters['profile/canSortMods']"
+                                   @end="drag=false"
+                                   :force-fallback="true"
+                                   :scroll-sensitivity="100"
+                                   item-key="id">
+                            <template #item="{element}">
+                                <local-mod-card
+                                    :mod="element" />
+                            </template>
+                        </draggable>
+                    </div>
+                </div>
+
+                <slot name="below-list"></slot>
             </div>
         </div>
-
-        <slot name="below-list"></slot>
     </div>
 </template>
 
@@ -69,6 +76,10 @@ const draggableList = computed({
     display: flex;
     flex-direction: column;
     width: 100%;
+
+    :deep(.island) {
+        flex: 1;
+    }
 
     .mod-list-content {
         flex: 1;

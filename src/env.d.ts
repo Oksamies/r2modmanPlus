@@ -44,6 +44,9 @@ declare global {
             openPath: (path: string) => void;
             openExternal: (path: string) => void;
             selectFile: (path: string) => void;
+            minimize: () => void;
+            maximize: () => void;
+            close: () => void;
         }
     }
 }

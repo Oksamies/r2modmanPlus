@@ -1,19 +1,9 @@
 <template>
-	<div class="manager-main-view">
-		<div class='notification is-warning' v-if="portableUpdateAvailable">
-			<div class='container'>
-				<p>
-					An update is available.
-					<ExternalLink :url="`https://github.com/ebkr/r2modmanPlus/releases/tag/${updateTagName}`">
-                        Click here to go to the release page.
-					</ExternalLink>
-				</p>
-			</div>
-		</div>
+    <div class="manager-main-view nimbus-scope">
 		<div id='steamIncorrectDir' :class="['modal', {'is-active':(showSteamIncorrectDirectoryModal !== false)}]">
 			<div class="modal-background" @click="showSteamIncorrectDirectoryModal = false"></div>
 			<div class='modal-content'>
-				<div class='notification is-danger'>
+                <div class='nimbus-notification nimbus-notification--danger'>
 					<h3 class='title'>Failed to set the Steam folder</h3>
 					<p>The steam executable was not selected.</p>
 					<p>If this error has appeared but the executable is correct, please run as administrator.</p>
@@ -25,7 +15,7 @@
 		<div id='ror2IncorrectDir' :class="['modal', {'is-active':(showRor2IncorrectDirectoryModal !== false)}]">
 			<div class="modal-background" @click="showRor2IncorrectDirectoryModal = false"></div>
 			<div class='modal-content'>
-				<div class='notification is-danger'>
+                <div class='nimbus-notification nimbus-notification--danger'>
 					<h3 class='title'>Failed to set the {{ activeGame.displayName }} folder</h3>
 					<p>The executable must be either of the following: "{{ activeGame.exeName.join('", "') }}".</p>
 					<p>If this error has appeared but the executable is correct, please run as administrator.</p>
@@ -39,7 +29,7 @@
 				<h2 class='modal-title'>Clearing the {{activeGame.displayName}} installation directory</h2>
 			</template>
 			<template v-slot:body>
-				<div class='notification is-warning'>
+                <div class='nimbus-notification nimbus-notification--warning'>
 					<p>
 						You will not not be able to launch the game until
 						Steam has verified the integrity of the game files.
@@ -130,8 +120,20 @@
         <UpdateAllInstalledModsModal />
         <LaunchTypeModal v-if="canRenderLaunchTypeModal()" />
 
-        <div class="router-view">
-            <router-view name="subview" v-on:setting-invoked="handleSettingsCallbacks($event)" />
+        <div class="island container--y manager-main-view__island">
+            <div class="island-item" v-if="portableUpdateAvailable">
+				<div class='nimbus-notification nimbus-notification--warning'>
+					<div class='nimbus-inline'>
+                        <p>
+                            An update is available.
+                            <ExternalLink :url="`https://github.com/ebkr/r2modmanPlus/releases/tag/${updateTagName}`">
+                                Click here to go to the release page.
+                            </ExternalLink>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <router-view name="subview" class="router-view" v-on:setting-invoked="handleSettingsCallbacks($event)" />
         </div>
     </div>
 </template>
@@ -563,6 +565,12 @@ onMounted(async () => {
     display: flex;
     flex: 1;
     width: 100%;
+}
+
+.manager-main-view__island {
+    flex: 1;
+    width: 100%;
+    min-height: 0;
 }
 
 .router-view {

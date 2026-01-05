@@ -1,0 +1,344 @@
+@layer nimbus-bridge {
+  /*
+   * Bridge layer:
+   * Re-skins a small, commonly used subset of Bulma classes when inside `.nimbus-scope`.
+   * This keeps behavioral/layout semantics intact while aligning visuals with Nimbus tokens.
+   */
+  .nimbus-scope {
+    /* Links */
+    a {
+      color: var(--color-text-a--default);
+    }
+
+    a:hover,
+    a:focus {
+      color: var(--color-text-a--hover);
+    }
+
+    /* Modal surfaces */
+    .modal-card-head {
+      background-color: var(--color-surface-a2);
+      border-bottom: 1px solid var(--border-default);
+      box-shadow: none;
+    }
+
+    /* Inputs */
+    .input {
+      background-color: var(--color-surface-2);
+      color: var(--color-text-primary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      box-shadow: none;
+    }
+
+    .textarea {
+      background-color: var(--color-surface-2);
+      color: var(--color-text-primary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      box-shadow: none;
+    }
+
+    /* Many views use `<select class="select">` (not Bulma's `.select > select`). */
+    select,
+    .select,
+    select.select {
+      background-color: var(--color-surface-2);
+      color: var(--color-text-primary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      box-shadow: none;
+    }
+
+    select:focus,
+    select:active,
+    .select:focus,
+    .select:active,
+    select.select:focus,
+    select.select:active,
+    .textarea:focus,
+    .textarea:active {
+      border-color: var(--color-accent-blue-7);
+      outline: none;
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-accent-blue-7) 70%, transparent);
+    }
+
+    /* Form layout + text */
+    .field {
+      margin-bottom: var(--gap-sm);
+    }
+
+    .control {
+      min-width: 0;
+    }
+
+    label,
+    .label {
+      color: var(--color-text-secondary);
+      font-weight: var(--font-weight-medium);
+    }
+
+    .help {
+      color: var(--color-text-tertiary);
+      font-size: var(--font-size-body-sm);
+    }
+
+    /* Checkbox/radio */
+    input[type="checkbox"],
+    input[type="radio"] {
+      accent-color: var(--color-accent-blue-7);
+    }
+
+    /* Code snippets */
+    code {
+      background-color: var(--color-surface-a2);
+      color: var(--color-text-primary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      padding: 0.15em 0.35em;
+      font-family: var(--font-family-monospace);
+    }
+
+    .code-snippet {
+      background-color: var(--color-surface-a2) !important;
+      color: var(--color-text-primary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md) !important;
+    }
+
+    .input::placeholder {
+      color: var(--color-text-tertiary);
+    }
+
+    .input:focus,
+    .input:active {
+      border-color: var(--color-accent-blue-7);
+      outline: none;
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-accent-blue-7) 70%, transparent);
+    }
+
+    /* Buttons */
+    .button {
+      background-color: var(--color-surface-a4);
+      color: var(--color-text-primary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      box-shadow: none;
+      transition:
+        background-color var(--animation-duration-md) var(--animation-timing-1),
+        border-color var(--animation-duration-md) var(--animation-timing-1);
+    }
+
+    .button:hover,
+    .button:focus {
+      background-color: var(--color-surface-a5);
+      border-color: var(--color-surface-a8);
+      color: var(--color-text-primary);
+    }
+
+    .button.is-info {
+      background-color: var(--color-accent-blue-6);
+      border-color: var(--color-accent-blue-7);
+      color: var(--color-text-primary);
+    }
+
+    .button.is-info:hover,
+    .button.is-info:focus {
+      background-color: var(--color-accent-blue-7);
+      border-color: var(--color-accent-blue-8);
+    }
+
+    .button.is-danger {
+      background-color: var(--color-accent-red-6);
+      border-color: var(--color-accent-red-7);
+      color: var(--color-text-primary);
+    }
+
+    .button.is-danger:hover,
+    .button.is-danger:focus {
+      background-color: var(--color-accent-red-7);
+      border-color: var(--color-accent-red-8);
+    }
+
+    .button.ghost {
+      background-color: transparent;
+      border-color: var(--border-default);
+    }
+
+    .button.ghost:hover,
+    .button.ghost:focus {
+      background-color: var(--color-surface-a3);
+    }
+
+    /* Tags */
+    .tag {
+      background-color: var(--color-surface-a4);
+      color: var(--color-text-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+    }
+
+    /* Text helpers */
+    .has-text-info {
+      color: var(--color-accent-blue-7) !important;
+    }
+
+    .has-text-danger {
+      color: var(--color-accent-red-7) !important;
+    }
+
+    .text-warning {
+      color: var(--color-accent-yellow-7) !important;
+    }
+
+    .has-text-white {
+      color: var(--color-text-primary) !important;
+    }
+
+    .text-grey {
+      color: var(--color-text-tertiary) !important;
+    }
+
+    /* Headings (Bulma `.title` / `.subtitle`) */
+    .title {
+      color: var(--color-text-primary);
+      font: var(--font-heading);
+      font-weight: var(--font-weight-semibold);
+      line-height: var(--line-height-md);
+    }
+
+    .subtitle {
+      color: var(--color-text-secondary);
+      font: var(--font-body);
+      line-height: var(--line-height-md);
+    }
+
+    .subtitle--is-background {
+      background-color: var(--nimbus-section-bg) !important;
+    }
+
+    /* Sticky/header helpers (defined in src/css/custom.scss) */
+    .sticky-top {
+      background-color: var(--nimbus-section-bg);
+      box-shadow: none;
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .sticky-top--opaque {
+      background-color: var(--nimbus-section-bg) !important;
+    }
+
+    .sticky-top--no-shadow {
+      box-shadow: none !important;
+    }
+
+    .sticky-top--no-padding {
+      padding: 0 !important;
+    }
+
+    .sticky-top--search {
+      background-color: inherit !important;
+    }
+
+    .background-bg {
+      background-color: var(--nimbus-section-bg) !important;
+    }
+
+    .inherit-background-colour {
+      background-color: inherit !important;
+    }
+
+    .has-background-black {
+      background-color: var(--color-surface-a2) !important;
+      color: var(--color-text-primary) !important;
+    }
+
+    /* Panels (used for settings list items) */
+    .panel-heading {
+      background-color: var(--color-surface-a2);
+      color: var(--color-text-primary);
+      border-bottom: 1px solid var(--border-default) !important;
+    }
+
+    .panel-block {
+      color: var(--color-text-primary);
+      border-bottom: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      transition: background-color var(--animation-duration-md) var(--animation-timing-1);
+    }
+
+    a.panel-block:hover,
+    label.panel-block:hover {
+      background-color: var(--color-surface-a3);
+    }
+
+    /* Pagination */
+    .pagination {
+      background-color: var(--nimbus-section-bg) !important;
+      border-top: 1px solid var(--border-default) !important;
+      padding: var(--gap-md) !important;
+    }
+
+    .pagination-list {
+      display: flex;
+      gap: var(--gap-2xs);
+      flex-wrap: wrap;
+    }
+
+    .pagination-link {
+      background-color: var(--color-surface-a4);
+      color: var(--color-text-primary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      min-width: 2.25rem;
+      height: 2.25rem;
+    }
+
+    .pagination-link:hover,
+    .pagination-link:focus {
+      background-color: var(--color-surface-a5);
+      border-color: var(--color-surface-a8);
+    }
+
+    .pagination-link.is-current {
+      background-color: color-mix(in srgb, var(--color-accent-blue-6) 35%, var(--color-surface-a4));
+      border-color: var(--color-accent-blue-7);
+    }
+
+    /* Modals */
+    .modal-background {
+      background-color: color-mix(in srgb, #000 55%, transparent);
+    }
+
+    .modal-card,
+    .modal-content {
+      background-color: var(--color-surface-a3);
+      color: var(--color-text-primary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      box-shadow: none;
+    }
+
+    .modal-card-head,
+    .modal-card-foot {
+      background-color: var(--color-surface-a2);
+      border-color: var(--border-default);
+    }
+
+    .modal-card-title,
+    .modal-title {
+      font: var(--font-heading);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+    }
+
+    .modal-close {
+      filter: none;
+    }
+
+    /* Existing helpers */
+    .border-at-bottom {
+      border-bottom-color: var(--border-default) !important;
+    }
+  }
+}
