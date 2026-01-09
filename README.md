@@ -31,6 +31,8 @@
 
 🔬 **[See the technical investigation & user stories](TECHNICAL_INVESTIGATION.md)** for in-depth technical analysis, 30 detailed user stories, and implementation details.
 
+⚡ **[See the performance bottleneck analysis](PERFORMANCE_ANALYSIS.md)** for deep analysis of performance issues, optimization strategies, and implementation roadmap.
+
 ## What is a mod manager?
 It's quite simple really, a mod manager is an application to make it easier to control which mods you have installed.
 
