@@ -33,6 +33,8 @@
 
 ⚡ **[See the performance bottleneck analysis](PERFORMANCE_ANALYSIS.md)** for deep analysis of performance issues, optimization strategies, and implementation roadmap.
 
+🔄 **[See the React migration guide](REACT_MIGRATION_GUIDE.md)** for comprehensive plan to migrate from Vue 3 + Quasar to React + Vite, including code structures, data patterns, and 24-week roadmap.
+
 ## What is a mod manager?
 It's quite simple really, a mod manager is an application to make it easier to control which mods you have installed.
 
