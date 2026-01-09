@@ -16,7 +16,7 @@
 |---|---|---|---|---|---|---|
 
 ## Features
-- Support for Risk of Rain 2, Dyson Sphere Program, Valheim, GTFO, BONEWORKS, and more
+- Support for 221+ games including Risk of Rain 2, Dyson Sphere Program, Valheim, GTFO, BONEWORKS, and many more
 - A clean user interface designed to make modding as simple as possible
 - Safer mod installation allowing you to play the game through Steam normally
 - Mod profiles to switch between different sets of mods quickly and easily
@@ -26,6 +26,14 @@
 - Edit configs directly from the manager
 - Auto-updates
 - And more!
+
+📖 **[See the complete features documentation](FEATURES.md)** for detailed feature descriptions, UX implications, and known pain points.
+
+🔬 **[See the technical investigation & user stories](TECHNICAL_INVESTIGATION.md)** for in-depth technical analysis, 30 detailed user stories, and implementation details.
+
+⚡ **[See the performance bottleneck analysis](PERFORMANCE_ANALYSIS.md)** for deep analysis of performance issues, optimization strategies, and implementation roadmap.
+
+🔄 **[See the React migration guide](REACT_MIGRATION_GUIDE.md)** for comprehensive plan to migrate from Vue 3 + Quasar to React + Vite, including code structures, data patterns, and 24-week roadmap.
 
 ## What is a mod manager?
 It's quite simple really, a mod manager is an application to make it easier to control which mods you have installed.
