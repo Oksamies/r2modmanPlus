@@ -29,6 +29,8 @@
 
 📖 **[See the complete features documentation](FEATURES.md)** for detailed feature descriptions, UX implications, and known pain points.
 
+🔬 **[See the technical investigation & user stories](TECHNICAL_INVESTIGATION.md)** for in-depth technical analysis, 30 detailed user stories, and implementation details.
+
 ## What is a mod manager?
 It's quite simple really, a mod manager is an application to make it easier to control which mods you have installed.
 
