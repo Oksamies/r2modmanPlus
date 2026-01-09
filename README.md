@@ -16,7 +16,7 @@
 |---|---|---|---|---|---|---|
 
 ## Features
-- Support for Risk of Rain 2, Dyson Sphere Program, Valheim, GTFO, BONEWORKS, and more
+- Support for 221+ games including Risk of Rain 2, Dyson Sphere Program, Valheim, GTFO, BONEWORKS, and many more
 - A clean user interface designed to make modding as simple as possible
 - Safer mod installation allowing you to play the game through Steam normally
 - Mod profiles to switch between different sets of mods quickly and easily
@@ -26,6 +26,8 @@
 - Edit configs directly from the manager
 - Auto-updates
 - And more!
+
+📖 **[See the complete features documentation](FEATURES.md)** for detailed feature descriptions, UX implications, and known pain points.
 
 ## What is a mod manager?
 It's quite simple really, a mod manager is an application to make it easier to control which mods you have installed.
