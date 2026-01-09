@@ -48,7 +48,7 @@ import GenericProfileInstaller from './r2mm/installing/profile_installers/Generi
 import ErrorModal from './components/modals/ErrorModal.vue';
 import { provideStoreImplementation } from './providers/generic/store/StoreProvider';
 import baseStore from './store';
-import { onMounted, ref, watchEffect } from 'vue';
+import { onMounted, onUnmounted, ref, watchEffect } from 'vue';
 import { useUtilityComposable } from './components/composables/UtilityComposable';
 import { useQuasar } from 'quasar';
 import { NodeFsImplementation } from './providers/node/fs/NodeFsImplementation';
@@ -100,7 +100,16 @@ provideProtocolImplementation(() => ProtocolProviderImplementation)
 
 BindLoaderImpl.bind();
 
+const mouseNavigationHandler = (e: MouseEvent) => {
+    if (e.button === 3) {
+        router.back();
+    } else if (e.button === 4) {
+        router.forward();
+    }
+}
+
 onMounted(async () => {
+    window.addEventListener("mouseup", mouseNavigationHandler);
     const settings: ManagerSettings = await store.dispatch('resetActiveGame');
 
     hookBackgroundUpdateThunderstoreModList(router);
@@ -141,6 +150,10 @@ onMounted(async () => {
 
     store.commit('updateModLoaderPackageNames');
     store.dispatch('tsMods/updateExclusions');
+});
+
+onUnmounted(() => {
+    window.removeEventListener("mouseup", mouseNavigationHandler);
 });
 
 watchEffect(() => {

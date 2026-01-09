@@ -9,17 +9,17 @@
             <!-- Active Game Mode -->
             <template v-else>
                 <!-- Game Header (Top) -->
-                <div class="game-header" v-if="!isCollapsed">
+                <div class="game-header" v-if="!isCollapsed" :class="{ 'disabled': isDownloading }">
                     <div class="game-icon-container">
                         <img :src="ProtocolProvider.getPublicAssetUrl(`/images/game_selection/${activeGame.gameImage}`)" alt="Game icon"/>
                     </div>
                     <div class="game-info">
                         <p class="game-title">{{ activeGame.displayName }}</p>
-                        <a href="#" @click.prevent="changeGame" class="change-game-link">Change game</a>
+                        <a href="#" @click.prevent="!isDownloading && changeGame()" class="change-game-link">Change game</a>
                     </div>
                 </div>
-                <div class="game-header-collapsed" v-else>
-                     <div class="game-icon-container" @click="changeGame" title="Change game">
+                <div class="game-header-collapsed" v-else :class="{ 'disabled': isDownloading }">
+                     <div class="game-icon-container" @click="!isDownloading && changeGame()" title="Change game">
                         <img :src="ProtocolProvider.getPublicAssetUrl(`/images/game_selection/${activeGame.gameImage}`)" alt="Game icon"/>
                     </div>
                 </div>
@@ -46,7 +46,7 @@
                 <div class="menu-section">
                     <ul class="menu-list">
                         <li>
-                            <router-link :to="{name: 'manager.installed'}" class="menu-link" title="Home">
+                            <router-link :to="{name: 'manager.dashboard'}" class="menu-link" title="Home">
                                 <i class="fas fa-home icon-margin-right" />
                                 <span v-if="!isCollapsed">Home</span>
                             </router-link>
@@ -59,9 +59,17 @@
                             </router-link>
                         </li>
                         <li>
-                            <router-link :to="{name: 'manager.online'}" class="menu-link" :class="{'is-active': $route.name === 'downloads'}" title="Get Mods">
+                            <router-link :to="{name: 'manager.online'}" class="menu-link" title="Get Mods">
                                 <i class="fas fa-download icon-margin-right" />
                                 <span v-if="!isCollapsed">Get Mods</span>
+                            </router-link>
+                        </li>
+                        <li>
+                            <router-link :to="{name: 'downloads'}" class="menu-link" title="Downloads">
+                                <i class="fas fa-file-download icon-margin-right" />
+                                <span v-if="!isCollapsed">Downloads</span>
+                                <span v-if="!isCollapsed && activeDownloadCount > 0" class="tag is-small is-primary margin-left-auto">{{activeDownloadCount}}</span>
+                                <span v-else-if="!isCollapsed && failedDownloadCount > 0" class="tag is-small is-danger margin-left-auto">{{failedDownloadCount}}</span>
                             </router-link>
                         </li>
                          <li>
@@ -134,6 +142,9 @@ const route = useRoute();
 const activeGame = computed<Game>(() => store.state.activeGame);
 const profile = computed<Profile>(() => store.getters['profile/activeProfile']);
 const localModCount = computed<number>(() => store.state.profile.modList.length);
+const activeDownloadCount = computed<number>(() => store.getters['download/activeDownloadCount']);
+const failedDownloadCount = computed<number>(() => store.getters['download/failedDownloadCount']);
+const isDownloading = computed(() => activeDownloadCount.value > 0);
 
 const isGameSelection = computed(() => route.name === 'index');
 const isCollapsed = ref(false);
@@ -180,11 +191,10 @@ async function launchGame(mode: LaunchMode) {
     flex-direction: column;
     height: 100%;
     padding: 1rem 0.5rem;
-    /* background-color: var(--island-bg-color, #101028); */ /* Handled by island-item */
     color: var(--color-text-secondary, #cbd0ec);
     transition: width 0.3s ease;
     width: 240px;
-    /* border-radius: 0 8px 8px 0; */ /* Handled by island-item */
+    border-radius: 0 8px 8px 0;
     
     &.is-collapsed {
         width: 68px;
@@ -273,6 +283,12 @@ async function launchGame(mode: LaunchMode) {
     margin-bottom: 1.5rem;
     background-color: rgba(255, 255, 255, 0.03);
     border-radius: 8px;
+
+    &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
+        cursor: not-allowed;
+    }
 }
 
 .game-header-collapsed {

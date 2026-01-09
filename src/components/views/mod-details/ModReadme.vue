@@ -1,0 +1,301 @@
+<template>
+    <div class="tab-content package-main">
+        <div v-if="loading" class="loading-placeholder">Loading description...</div>
+        <div v-else-if="readmeContent" v-html="readmeContent" class="markdown"></div>
+        <div v-else class="empty-placeholder">No detailed description available.</div>
+    </div>
+</template>
+
+<script lang="ts" setup>
+import { ref, inject, watch, Ref, onMounted } from 'vue';
+import { PackageListingDetailsResponseData } from '../../../r2mm/api/schemas/responseSchemas';
+import GameManager from '../../../model/game/GameManager';
+
+const modDetails = inject<Ref<PackageListingDetailsResponseData | null>>('modDetails');
+
+const readmeContent = ref<string | null>(null);
+const loading = ref(false);
+
+const fetchReadme = async (data: PackageListingDetailsResponseData) => {
+    loading.value = true;
+    try {
+        const activeGame = GameManager.activeGame;
+        const version = data.latest_version_number; 
+        const url = `${new URL(activeGame.thunderstoreUrl).origin}/api/cyberstorm/package/${data.namespace}/${data.name}/v/${version}/readme/`;
+        
+        const response = await fetch(url);
+        if (response.ok) {
+            const json = await response.json();
+            readmeContent.value = json.html;
+        } else {
+            console.warn("Failed to fetch readme", response.status);
+            readmeContent.value = null;
+        }
+    } catch (e) {
+        console.error("Failed to fetch readme", e);
+    } finally {
+        loading.value = false;
+    }
+}
+
+watch(() => modDetails?.value, (newVal) => {
+    if (newVal) {
+        fetchReadme(newVal);
+    }
+}, { immediate: true });
+
+</script>
+
+<style lang="scss" scoped>
+// Inherit variables via deep or re-declare
+$surface-bg: #101028;
+$text-secondary: #a7aed2;
+
+.tab-content {
+    display: flex;
+    flex: 1;
+    margin: 24px;
+}
+
+.loading-placeholder, .empty-placeholder {
+    padding: 40px;
+    text-align: center;
+    color: $text-secondary;
+    background: rgba(16, 16, 40, 0.4);
+    border-radius: 4px;
+    font-size: 14px;
+    flex: 1;
+}
+
+.package-main {
+    background-color: transparent;
+    color: #d1d5db;
+    
+    ::v-deep(.markdown) {
+        display: block;
+        color: var(--color-text-primary);
+        font: var(--font-body);
+        font-weight: var(--font-weight-regular);
+        line-height: 160%;
+        word-break: break-word;
+
+        a {
+            color: var(--color-text-a--default);
+            text-decoration: none;
+        }
+
+        a:where(:hover),
+        a:where(:active) {
+            color: var(--color-text-a--hover);
+            text-decoration: underline;
+        }
+
+        > :first-child {
+            margin-top: 0;
+        }
+
+        blockquote,
+        details,
+        dl,
+        ol,
+        p,
+        pre,
+        table,
+        ul {
+            margin-top: 0;
+            margin-bottom: var(--space-16);
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            display: block;
+            align-items: flex-start;
+            align-self: stretch;
+            font: var(--font-body);
+            font-weight: var(--font-weight-bold);
+            line-height: normal;
+        }
+
+        h1,
+        h2 {
+            margin: var(--space-32) 0 var(--space-8);
+            border-bottom: var(--border-width--px) solid var(--color-surface-a7);
+        }
+
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin-top: var(--space-24);
+            margin-bottom: var(--space-8);
+        }
+
+        h1 {
+            font-size: 2.25rem;
+        }
+
+        h2 {
+            font-size: 1.75rem;
+        }
+
+        h3 {
+            font-size: var(--font-size-body-xxl);
+        }
+
+        h4 {
+            font-size: var(--font-size-body-lg);
+        }
+
+        h5,
+        h6 {
+            font-size: var(--font-size-body-md);
+        }
+
+        h6 {
+            color: var(--color-text-tertiary);
+        }
+
+        hr {
+            align-self: stretch;
+            height: var(--space-4);
+            margin: var(--space-24) 0;
+            background: var(--color-surface-a8);
+        }
+
+        i {
+            font-weight: var(--font-weight-regular);
+            font-style: italic;
+        }
+
+        b {
+            font-weight: var(--font-weight-bold);
+        }
+
+        ul,
+        ol {
+            padding-left: 2em;
+            list-style-position: outside;
+
+            ul,
+            ol {
+                margin-bottom: unset;
+            }
+        }
+
+        img {
+            max-width: 100%; /* Ensure images don't overflow */
+            display: inline-block;
+        }
+
+        pre {
+            padding: var(--space-16);
+            border: var(--border-width--px) solid var(--color-surface-8);
+            border-radius: var(--radius-md);
+            background: var(--color-surface-1);
+        }
+
+        code {
+            display: inline-flex;
+            padding: 0.125rem 0.375rem;
+            border: var(--border-width--px) solid var(--color-surface-a10);
+            border-radius: var(--radius-sm);
+            color: var(--color-text-primary);
+            font-weight: var(--font-weight-regular);
+            font-size: 0.813rem;
+            font-family: var(--font-family-monospace);
+            font-style: normal;
+            line-height: var(--line-height-md);
+            white-space: break-spaces;
+            overflow-wrap: break-word;
+            background: var(--color-surface-1);
+        }
+
+        pre code {
+            display: block;
+            padding: 0;
+            border: 0;
+            border-radius: 0;
+            color: var(--color-text-primary);
+        }
+
+        blockquote {
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap-md);
+            align-items: flex-start;
+            align-self: stretch;
+            padding-left: var(--space-32);
+            border-left: var(--border-width--4) solid var(--color-surface-9);
+            color: var(--color-text-secondary);
+            font-weight: var(--font-weight-regular);
+            line-height: var(--line-height-md);
+
+            blockquote {
+                display: flex;
+                gap: 0;
+            }
+        }
+
+        table {
+            display: block;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            overflow: auto;
+        }
+
+        tbody tr:nth-child(even) {
+            background: var(--color-surface-3);
+        }
+
+        tbody tr:nth-child(odd) {
+            background: var(--color-surface-1);
+        }
+
+        table tr th,
+        table tr td {
+            padding: var(--space-12) var(--space-16);
+            border-right: var(--border-width--px) solid var(--color-surface-a8);
+            border-bottom: var(--border-width--px) solid var(--color-surface-a8);
+            color: var(--color-text-primary);
+        }
+
+        table tr th {
+            border-top: solid var(--border-width--px) var(--color-surface-a8);
+            color: var(--color-text-tertiary);
+            white-space: nowrap;
+            text-align: left;
+            background: var(--color-surface-5);
+
+            * {
+                white-space: inherit;
+            }
+        }
+
+        table tr th:first-child,
+        table tr td:first-child {
+            border-left: var(--border-width--px) solid var(--color-surface-a8);
+        }
+
+        table tr:first-child th:first-child {
+            border-top-left-radius: var(--space-8);
+        }
+
+        table tr:first-child th:last-child {
+            border-top-right-radius: var(--space-8);
+        }
+
+        table tr:last-child td:first-child {
+            border-bottom-left-radius: var(--space-8);
+        }
+
+        table tr:last-child td:last-child {
+            border-bottom-right-radius: var(--space-8);
+        }
+    }
+}
+</style>

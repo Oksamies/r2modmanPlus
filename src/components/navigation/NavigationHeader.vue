@@ -2,22 +2,31 @@
     <div class="navigation-header">
         <div class="header-left">
             <div class="logo-container">
-                <img src="/icons/favicon-32x32.png" alt="Logo" class="logo-img" />
+                <img src="/icons/tslogo.svg" alt="Logo" class="logo-img" />
             </div>
             <div class="nav-controls">
-                <button class="nav-button" disabled>
+                <button class="nav-button" @click="goBack">
                     <i class="fas fa-angle-left"></i>
                 </button>
-                <button class="nav-button" disabled>
+                <button class="nav-button" @click="goForward">
                     <i class="fas fa-angle-right"></i>
                 </button>
             </div>
             <div class="header-title">
                 <span v-if="isGameSelection">Select Game</span>
-                <template v-else>
-                    <span class="game-title">{{ activeGame.displayName }}</span>
-                    <span class="profile-name" v-if="profile">{{ profile.getProfileName() }}</span>
-                </template>
+                <!-- Breadcrumbs -->
+                <div v-else class="header-breadcrumbs">
+                    <template v-for="(crumb, index) in crumbs" :key="index">
+                        <span v-if="index > 0" class="breadcrumb-separator">/</span>
+                        <span 
+                            class="breadcrumb-item" 
+                            :class="{'is-active': crumb.active}"
+                            @click="crumb.to ? router.push(crumb.to) : null"
+                        >
+                            {{ crumb.label }}
+                        </span>
+                    </template>
+                </div>
             </div>
         </div>
         <div class="header-right">
@@ -48,14 +57,70 @@
 import { computed } from 'vue';
 import { getStore } from '../../providers/generic/store/StoreProvider';
 import { State } from '../../store';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const store = getStore<State>();
 const route = useRoute();
+const router = useRouter();
 const activeGame = computed(() => store.state.activeGame);
 const profile = computed(() => store.getters['profile/activeProfile']);
 
 const isGameSelection = computed(() => route.name === 'index');
+
+const crumbs = computed(() => {
+    const routeName = (route.name as string) || '';
+    const c = [];
+    
+    // Base Game Breadcrumb
+    if (activeGame.value) {
+        c.push({
+            label: activeGame.value.displayName,
+            to: { name: 'manager.installed' }
+        });
+    }
+
+    if (routeName.includes('manager.installed')) {
+        c.push({ label: 'Installed', active: true });
+    } else if (routeName.includes('manager.online')) {
+        c.push({ label: 'Online', active: true });
+    } else if (routeName.includes('manager.settings')) {
+        c.push({ label: 'Settings', active: true });
+    } else if (routeName.includes('config-editor')) {
+        c.push({ label: 'Config Editor', active: true });
+    } else if (routeName.includes('downloads')) {
+        c.push({ label: 'Downloads', active: true });
+    } else if (routeName.includes('help')) {
+        c.push({ label: 'Help', active: true });
+    } else if (routeName.includes('manager.mod_details')) {
+        // Formatted package name if possible
+        const pkg = route.params.package as string;
+        let label = pkg;
+        // Try to strip namespace if it follows "Namespace-Name" pattern
+        if (pkg && pkg.indexOf('-') > 0) {
+            const parts = pkg.split('-');
+            if (parts.length >= 2) {
+                label = parts.slice(1).join('-');
+            }
+        }
+        // Replace underscores
+        if (label) {
+            label = label.replace(/_/g, ' ');
+            c.push({ label: label, active: true });
+        } else {
+             c.push({ label: 'Mod Details', active: true });
+        }
+    }
+
+    return c;
+});
+
+function goBack() {
+    router.back();
+}
+
+function goForward() {
+    router.forward();
+}
 
 function minimize() {
     window.electron.minimize();
@@ -153,7 +218,35 @@ function close() {
     
     .profile-name {
         color: #a7aed2;
-        font-weight: 400;
+        breadcrumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+}
+
+.breadcrumb-item {
+    color: #a7aed2;
+    cursor: pointer;
+    font-weight: 400;
+    transition: color 0.1s;
+    
+    &:hover, &.is-active {
+        color: #f5f5f6; 
+    }
+    
+    &.is-active {
+        font-weight: 600;
+        cursor: default;
+    }
+}
+
+.breadcrumb-separator {
+    color: #5b6288;
+    font-weight: 400;
+}
+
+.header-font-weight: 400;
         &::before {
             content: '/';
             margin-right: 8px;

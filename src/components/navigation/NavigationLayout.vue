@@ -31,7 +31,8 @@ import NavigationFooter from './NavigationFooter.vue';
 
 .app-body {
     overflow: hidden;
-    padding: 4px 4px; /* Horizontal padding for body */    flex: 1;}
+    padding: 4px 0;
+    flex: 1;}
 
 .app-sidebar {
     width: auto;
@@ -42,12 +43,13 @@ import NavigationFooter from './NavigationFooter.vue';
 }
 
 .app-content {
-    overflow-y: auto;
+    // overflow-y: auto;
     position: relative;
     padding: 0;
     display: flex;
     flex-direction: column;
     flex: 1;
+    height: 100%;
 }
 </style>
 

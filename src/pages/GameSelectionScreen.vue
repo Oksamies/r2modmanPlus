@@ -1,5 +1,5 @@
 <template>
-    <div class="nimbus-scope">
+    <div class="nimbus-scope game-selection-screen">
         <ModalCard id="select-platform-modal" v-show="showPlatformModal" :is-active="showPlatformModal" @close-modal="() => {showPlatformModal = false;}" class="z-max z-top">
             <template v-slot:header>
                 <h2 class='modal-title'>Which store manages your game?</h2>
@@ -18,8 +18,8 @@
                 </button>
             </template>
         </ModalCard>
-        <div class="game-selection-container">
-            <div class="game-selection-header">
+        <div class="cyberstorm-container cyberstorm-container--y island game-selection-container">
+            <div class="cyberstorm-container cyberstorm-container--x island-item game-selection-header">
                 <div class="game-selection-title">
                     <span class="text-white">Select </span>
                     <span class="text-primary cursor-pointer" @click="toggleGameServer">
@@ -49,7 +49,7 @@
                 </div>
             </div>
 
-            <div class="game-selection-content">
+            <div class="cyberstorm-container cyberstorm-container--y island-item game-selection-content">
                 <div v-if="runningMigration" class="nimbus-notification nimbus-notification--warning nimbus-notification--square margin-bottom">
                     <div class="nimbus-container">
                         <p>An update to the manager has occurred and needs to do background work.</p>
@@ -355,6 +355,10 @@ function capitalize(str: string) {
 
 
 <style lang="scss" scoped>
+.game-selection-screen {
+    height: 100%;
+}
+
 .game-selection-container {
     display: flex;
     flex-direction: column;
@@ -492,7 +496,8 @@ function capitalize(str: string) {
 .game-selection-content {
     flex-grow: 1;
     overflow-y: auto;
-    padding: 0 2.5rem 2.5rem 2.5rem; // Match header padding
+    padding: 2.5rem;
+    height: 100%;
 }
 
 .game-section {

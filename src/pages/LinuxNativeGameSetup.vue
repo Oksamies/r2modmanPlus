@@ -1,6 +1,6 @@
 <template>
     <div class="nimbus-scope">
-        <div class="island container--y">
+        <div class="island cyberstorm-container cyberstorm-container--y">
             <div class="island-item">
                 <Hero :title="`Getting started on ${platformName}`" subtitle="Let's configure the game properly" heroType="warning" />
             </div>

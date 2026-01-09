@@ -272,39 +272,6 @@
       background-color: var(--color-surface-a3);
     }
 
-    /* Pagination */
-    .pagination {
-      background-color: var(--nimbus-section-bg) !important;
-      border-top: 1px solid var(--border-default) !important;
-      padding: var(--gap-md) !important;
-    }
-
-    .pagination-list {
-      display: flex;
-      gap: var(--gap-2xs);
-      flex-wrap: wrap;
-    }
-
-    .pagination-link {
-      background-color: var(--color-surface-a4);
-      color: var(--color-text-primary);
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-sm);
-      min-width: 2.25rem;
-      height: 2.25rem;
-    }
-
-    .pagination-link:hover,
-    .pagination-link:focus {
-      background-color: var(--color-surface-a5);
-      border-color: var(--color-surface-a8);
-    }
-
-    .pagination-link.is-current {
-      background-color: color-mix(in srgb, var(--color-accent-blue-6) 35%, var(--color-surface-a4));
-      border-color: var(--color-accent-blue-7);
-    }
-
     /* Modals */
     .modal-background {
       background-color: color-mix(in srgb, #000 55%, transparent);

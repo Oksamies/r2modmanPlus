@@ -1,6 +1,6 @@
 <template>
     <div class="nimbus-scope">
-        <div class="island container--y">
+        <div class="island cyberstorm-container cyberstorm-container--y">
             <div class="island-item">
                 <hero :title=heroTitle :subtitle='splashText' :heroType=heroType />
             </div>

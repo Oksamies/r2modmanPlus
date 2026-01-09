@@ -6,25 +6,25 @@
   }
 
   /* CONTAINER, basically flex wrapper utility class */
-  .container {
+  .cyberstorm-container {
     display: flex;
     min-width: 0;
     min-height: 0;
   }
 
-  .container--x {
+  .cyberstorm-container--x {
     flex-direction: row;
   }
 
-  .container--y {
+  .cyberstorm-container--y {
     flex-direction: column;
   }
 
-  .container--full {
+  .cyberstorm-container--full {
     flex: 1;
   }
 
-  .container--stretch {
+  .cyberstorm-container--stretch {
     align-self: stretch;
   }
 

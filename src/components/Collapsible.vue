@@ -17,7 +17,11 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 
-const isOpen = ref(false);
+const props = defineProps<{
+    initiallyOpen?: boolean;
+}>();
+
+const isOpen = ref(props.initiallyOpen || false);
 
 function toggle() {
     isOpen.value = !isOpen.value;

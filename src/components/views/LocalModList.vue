@@ -1,6 +1,6 @@
 <template>
     <div class="pane nimbus-scope">
-        <div class="island container--y">
+        <div class="island cyberstorm-container cyberstorm-container--y">
             <div class="island-item" id="controls">
                 <div class="search-and-sort">
                     <SearchAndSort />

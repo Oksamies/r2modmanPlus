@@ -1,7 +1,7 @@
 <template>
-  <div class="container--y container--full island" style="display: flex; width: 100%;">
+  <div class="cyberstorm-container cyberstorm-container--y cyberstorm-container--full island" style="display: flex; width: 100%; max-height: 100%;">
     <GameHeader />
-    <PackageList mode="installed" class="island-item container--full" />
+    <PackageList mode="installed" class="island-item cyberstorm-container cyberstorm-container--full" />
   </div>
 </template>
 

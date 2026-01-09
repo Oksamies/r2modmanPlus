@@ -1,58 +1,76 @@
 <template>
-    <ModalCard id="download-mod-version-select-modal" :is-active="isOpen" :can-close="true" v-if="thunderstoreMod !== null" @close-modal="closeModal()">
-        <template v-slot:header>
-            <h2 class='modal-title' v-if="thunderstoreMod !== null">
-                Select a version of {{thunderstoreMod.getName()}} to download
-            </h2>
-        </template>
-        <template v-slot:body>
-            <p>It's recommended to select the latest version of all mods.</p>
-            <p>Using outdated versions may cause problems.</p>
-            <br/>
-            <div class="nimbus-toolbar">
-                <template v-if="currentVersion !== null">
-                    <div class="nimbus-toolbar__group">
-                        <select class="select" disabled="true">
-                            <option selected>
-                                {{currentVersion}}
-                            </option>
-                        </select>
+    <div class="modal-overlay" v-if="isOpen && thunderstoreMod">
+        <div class="modal-backdrop" @click="closeModal()"></div>
+        <div class="cyber-modal">
+            <div class="cyber-modal-header">
+                <h2 class="modal-title">
+                    Download <span class="highlight">{{thunderstoreMod.getName()}}</span>
+                </h2>
+                <button class="close-btn" @click="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="cyber-modal-body">
+                <p class="description">It's recommended to select the latest version. Installing outdated versions may cause conflicts.</p>
+                
+                <div class="selection-area">
+                    <!-- Current Version Block -->
+                    <div v-if="currentVersion" class="version-block">
+                        <span class="label">Current</span>
+                        <div class="version-display">{{ currentVersion }}</div>
                     </div>
-                    <div class="nimbus-toolbar__group">
-                        <span class="margin-right margin-right--half-width"><span class="margin-right margin-right--half-width"/> <i class='fas fa-long-arrow-alt-right'></i></span>
+
+                    <div v-if="currentVersion" class="arrow-divider">
+                        <i class="fas fa-long-arrow-alt-right"></i>
                     </div>
-                </template>
-                <div class="nimbus-toolbar__group">
-                    <select class='select' v-model="selectedVersion">
-                        <option v-for='(value, index) in versionNumbers' :key='index' :value='value'>
-                            {{value}}
-                        </option>
-                    </select>
+
+                    <!-- Target Version Block -->
+                    <div class="version-block">
+                        <span class="label">Target</span>
+                        <div class="custom-select">
+                            <select v-model="selectedVersion">
+                                <option v-for="(value, index) in versionNumbers" :key="index" :value="value">{{value}}</option>
+                            </select>
+                            <i class="fas fa-chevron-down select-icon"></i>
+                        </div>
+                    </div>
                 </div>
-                <div class="nimbus-toolbar__group">
-                    <span class="tag is-dark" v-if='selectedVersion === null'>
-                        You need to select a version
-                    </span>
-                    <span class="tag is-success" v-else-if='recommendedVersion === selectedVersion'>
-                        {{selectedVersion}} is the recommended version
-                    </span>
-                    <span class="tag is-success" v-else-if='versionNumbers[0] === selectedVersion'>
-                        {{selectedVersion}} is the latest version
-                    </span>
-                    <span class="tag is-danger" v-else-if='versionNumbers[0] !== selectedVersion'>
-                        {{selectedVersion}} is an outdated version
-                    </span>
+
+                <!-- Status Indicators -->
+                <div class="status-area">
+                    <div v-if="selectedVersion === null" class="status-msg info">
+                        Please select a version to proceed.
+                    </div>
+                    <div v-else-if="recommendedVersion === selectedVersion" class="status-msg success">
+                        <i class="fas fa-check-circle"></i>
+                        {{selectedVersion}} is the recommended version.
+                    </div>
+                    <div v-else-if="versionNumbers[0] === selectedVersion" class="status-msg success">
+                        <i class="fas fa-star"></i>
+                        {{selectedVersion}} is the latest version.
+                    </div>
+                    <div v-else class="status-msg warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {{selectedVersion}} is an outdated version.
+                    </div>
                 </div>
             </div>
-        </template>
-        <template v-slot:footer>
-            <button class="button is-info" @click="downloadMod">Download with dependencies</button>
-        </template>
-    </ModalCard>
+
+            <div class="cyber-modal-footer">
+                <button class="btn-ghost" @click="closeModal()">
+                    Cancel
+                </button>
+                <button class="btn-primary" @click="downloadMod" :disabled="!selectedVersion">
+                    <i class="fas fa-download"></i>
+                    <span>Download with dependencies</span>
+                </button>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script lang="ts" setup>
-import ModalCard from "../ModalCard.vue";
 import R2Error from "../../model/errors/R2Error";
 import ManifestV2 from "../../model/ManifestV2";
 import ThunderstoreVersion from "../../model/ThunderstoreVersion";
@@ -160,3 +178,226 @@ async function downloadHandler(tsMod: ThunderstoreMod, tsVersion: ThunderstoreVe
 }
 
 </script>
+
+<style lang="scss" scoped>
+/* Modal Structure */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(2px);
+}
+
+.cyber-modal {
+    position: relative;
+    background-color: #101028;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: modalSlideUp 0.2s ease-out;
+}
+
+@keyframes modalSlideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.cyber-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: #f5f5f6;
+    
+    .highlight {
+        color: #23ffab;
+    }
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    color: #a7aed2;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px;
+    &:hover { color: #f5f5f6; }
+}
+
+.cyber-modal-body {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.description {
+    color: #a7aed2;
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Selection Area */
+.selection-area {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.version-block {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.arrow-divider {
+    color: #a7aed2;
+    font-size: 14px;
+    margin-top: 18px; // align with input
+}
+
+.label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #a7aed2;
+}
+
+.version-display {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    color: #f5f5f6;
+    font-family: monospace;
+    font-size: 14px;
+}
+
+.custom-select {
+    position: relative;
+    height: 40px;
+    width: 100%;
+    
+    select {
+        width: 100%;
+        height: 100%;
+        background: rgba(59, 63, 125, 0.24);
+        border: 1px solid transparent;
+        border-radius: 4px;
+        color: #f5f5f6;
+        padding: 0 32px 0 12px;
+        appearance: none;
+        cursor: pointer;
+        font-family: monospace;
+        font-size: 14px;
+        
+        &:hover { border-color: rgba(255,255,255,0.1); }
+        &:focus { border-color: #623bce; outline: none; }
+    }
+    
+    .select-icon {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+        color: #a7aed2;
+        font-size: 12px;
+    }
+}
+
+/* Status Messages */
+.status-area {
+    font-size: 14px;
+}
+
+.status-msg {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 4px;
+    font-weight: 500;
+    
+    &.info {
+        background: rgba(70, 70, 149, 0.2);
+        color: #a7aed2;
+    }
+    
+    &.success {
+        background: rgba(35, 255, 171, 0.1);
+        color: #23ffab;
+    }
+    
+    &.warning {
+        background: rgba(243, 207, 79, 0.1);
+        color: #f3cf4f;
+    }
+}
+
+.cyber-modal-footer {
+    display: flex;
+    padding: 20px 24px;
+    justify-content: flex-end;
+    gap: 12px;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Buttons */
+button {
+    height: 40px;
+    padding: 0 20px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #623bce;
+    color: #f5f5f6;
+    
+    &:hover:not(:disabled) { filter: brightness(1.1); }
+    &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.btn-ghost {
+    background: transparent;
+    color: #a7aed2;
+    
+    &:hover { color: #f5f5f6; background: rgba(255,255,255,0.05); }
+}
+
+</style>

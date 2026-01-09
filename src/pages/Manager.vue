@@ -120,7 +120,7 @@
         <UpdateAllInstalledModsModal />
         <LaunchTypeModal v-if="canRenderLaunchTypeModal()" />
 
-        <div class="island container--y manager-main-view__island">
+        <div class="island cyberstorm-container cyberstorm-container--y manager-main-view__island">
             <div class="island-item" v-if="portableUpdateAvailable">
 				<div class='nimbus-notification nimbus-notification--warning'>
 					<div class='nimbus-inline'>
@@ -565,6 +565,7 @@ onMounted(async () => {
     display: flex;
     flex: 1;
     width: 100%;
+    max-height: 100%;
 }
 
 .manager-main-view__island {

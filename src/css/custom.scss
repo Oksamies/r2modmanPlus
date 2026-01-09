@@ -163,21 +163,6 @@ select {
     }
 }
 
-
-.pagination {
-    position: sticky !important;
-    bottom: 0 !important;
-    background-color: $scheme-background;
-    padding: 1em;
-    border-top: 1px solid $scheme-border;
-    text-align: left;
-    z-index: 10;
-}
-
-.pagination--invisible {
-    visibility: hidden;
-}
-
 .smaller-font {
     font-size: 0.9em;
 }
@@ -449,25 +434,25 @@ code {
 }
 
 /* CONTAINER, basically flex wrapper utility class */
-.container {
+.cyberstorm-container {
     display: flex;
     min-width: 0;
     min-height: 0;
 }
 
-.container--x {
+.cyberstorm-container--x {
     flex-direction: row;
 }
 
-.container--y {
+.cyberstorm-container--y {
     flex-direction: column;
 }
 
-.container--full {
+.cyberstorm-container--full {
     flex: 1;
 }
 
-.container--stretch {
+.cyberstorm-container--stretch {
     align-self: stretch;
 }
 
@@ -480,4 +465,38 @@ code {
 .island-item {
     border-radius: var(--section-border-radius);
     background-color: var(--section-bg);
+    overflow: hidden;
+}
+
+/* Global Scrollbar Styles (matching Cyberstorm Theme) */
+* {
+    scrollbar-color: transparent transparent;
+    scrollbar-width: thin;
+}
+
+*:hover {
+    scrollbar-color: var(--color-surface-a8) transparent;
+}
+
+*::-webkit-scrollbar {
+    background-color: transparent;
+    width: 6px;
+    height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 9999px;
+}
+
+*:hover::-webkit-scrollbar-thumb {
+    background-color: var(--color-surface-a8);
+}
+
+*::-webkit-scrollbar-corner {
+    background-color: transparent;
 }

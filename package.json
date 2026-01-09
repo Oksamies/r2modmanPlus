@@ -61,7 +61,8 @@
     "vue-router": "^4.5.1",
     "vuedraggable": "4.1.0",
     "vuex": "^4.1.0",
-    "yaml": "^1.7.2"
+    "yaml": "^1.7.2",
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@babel/core": "^7.4.0",

@@ -44,6 +44,14 @@ const routes: RouteRecordRaw[] = [
                 meta: {title: () => profileTitle()},
                 children: [
                     {
+                        name: 'manager.dashboard',
+                        path: 'dashboard/',
+                        components: {
+                            subview: () => import('components/views/GameDashboard.vue')
+                        },
+                        meta: {title: () => profileTitle()}
+                    },
+                    {
                         name: 'manager.installed',
                         path: 'installed/',
                         alias: '',
@@ -67,6 +75,47 @@ const routes: RouteRecordRaw[] = [
                             subview: () => import('components/settings-components/SettingsView.vue')
                         },
                         meta: {title: () => profileTitle()}
+                    },
+                    {
+                        name: 'manager.mod_details',
+                        path: 'mod/:community/:namespace/:package',
+                        redirect: { name: 'manager.mod_details.details' },
+                        components: {
+                            subview: () => import('components/views/ModDetailsView.vue')
+                        },
+                        meta: {title: () => profileTitle()},
+                        children: [
+                            {
+                                name: 'manager.mod_details.details',
+                                path: '',
+                                component: () => import('components/views/mod-details/ModReadme.vue'),
+                                meta: {title: () => profileTitle()}
+                            },
+                            {
+                                name: 'manager.mod_details.required',
+                                path: 'required',
+                                component: () => import('components/views/mod-details/ModRequired.vue'),
+                                meta: {title: () => profileTitle()}
+                            },
+                            {
+                                name: 'manager.mod_details.wiki',
+                                path: 'wiki',
+                                component: () => import('components/views/mod-details/ModWiki.vue'),
+                                meta: {title: () => profileTitle()}
+                            },
+                            {
+                                name: 'manager.mod_details.changelog',
+                                path: 'changelog',
+                                component: () => import('components/views/mod-details/ModChangelog.vue'),
+                                meta: {title: () => profileTitle()}
+                            },
+                            {
+                                name: 'manager.mod_details.versions',
+                                path: 'versions',
+                                component: () => import('components/views/mod-details/ModVersions.vue'),
+                                meta: {title: () => profileTitle()}
+                            }
+                        ]
                     }
                 ]
             },

@@ -1,13 +1,13 @@
 <template>
-  <div class="container--y container--full island" style="display: flex; width: 100%;">
+  <div class="cyberstorm-container--y cyberstorm-container--full island" style="display: flex; flex-direction: column; width: 100%; max-height: 100%;">
     <GameHeader />
-    <PackageList mode="online" class="island-item container--full" />
+    <PackageSearch />
   </div>
 </template>
 
 <script lang="ts" setup>
 import GameHeader from '../GameHeader.vue';
-import PackageList from '../PackageList.vue';
+import PackageSearch from './PackageSearch/PackageSearch.vue';
 </script>
 
 <style lang="scss" scoped>

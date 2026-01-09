@@ -1,10 +1,10 @@
 <template>
-  <div class="nimbus-scope container--full island">
+  <div class="nimbus-scope cyberstorm-container cyberstorm-container--full island">
     <CreateProfileModal />
     <DeleteProfileModal />
     <RenameProfileModal />
     <ImportProfileModal />
-    <div class="island container--y container--full">
+    <div class="island cyberstorm-container cyberstorm-container--y cyberstorm-container--full">
       <div class="island-item">
         <hero
           title="Profile selection"

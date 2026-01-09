@@ -18,6 +18,7 @@ import { installModsToProfile } from "../../utils/ProfileUtils";
 interface DownloadProgress {
     downloadId: UUID;
     initialMods: ThunderstoreCombo[];
+    allMods: ThunderstoreCombo[];
     installMode: InstallMode;
     game: Game;
     profile: ImmutableProfile;
@@ -92,6 +93,7 @@ export const DownloadModule = {
             const downloadObject: DownloadProgress = {
                 downloadId,
                 initialMods: [...initialMods],
+                allMods: [...modsWithDependencies],
                 installMode,
                 game,
                 profile,
@@ -233,6 +235,12 @@ export const DownloadModule = {
         },
         activeDownloads(state) {
             return getOnlyActiveDownloads(state.allDownloads);
+        },
+        failedDownloads(state) {
+            return state.allDownloads.filter(dl => dl.status === DownloadStatusEnum.FAILED);
+        },
+        failedDownloadCount(_state, getters) {
+            return getters.failedDownloads.length;
         },
         currentDownload(state) {
             return state.allDownloads[state.allDownloads.length-1] || null;
