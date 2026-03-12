@@ -9,7 +9,7 @@ import LocalModInstallerProvider from '../../providers/ror2/installing/LocalModI
 import { ImmutableProfile } from '../../model/Profile';
 import FileUtils from '../../utils/FileUtils';
 import path from '../../providers/node/path/path';
-import { TcliBridge } from '../tcli/TcliBridge';
+import TcliBridge from '../tcli/TcliBridge';
 
 export default class LocalModInstaller extends LocalModInstallerProvider {
 

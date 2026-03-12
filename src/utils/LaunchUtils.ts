@@ -13,6 +13,7 @@ import PathResolver from "../r2mm/manager/PathResolver";
 import appWindow from '../providers/node/app/app_window';
 import InteractionProvider from "../providers/ror2/system/InteractionProvider";
 import { TypedEventEmitter } from "./TypedEventEmitter";
+import FsProvider from '../providers/generic/file/FsProvider';
 import TcliBridge from '../r2mm/tcli/TcliBridge';
 
 export enum LaunchMode { VANILLA, MODDED };
@@ -71,7 +72,7 @@ export const throwIfNoGameDir = async (game: Game): Promise<void> => {
 
     const settings = await ManagerSettings.getSingleton(game);
     const ctcGameDir = settings.getContext().gameSpecific.gameDirectory!;
-    const ctxGameDirExists = await TcliBridge.invoke<boolean>(['fs', 'exists', ctcGameDir]);
+    const ctxGameDirExists = await FsProvider.instance.exists(ctcGameDir);
 
     if (!ctxGameDirExists) {
         throw error;

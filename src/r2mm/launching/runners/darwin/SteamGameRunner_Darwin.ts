@@ -6,7 +6,7 @@ import ManagerSettings from '../../../manager/ManagerSettings';
 import LoggerProvider, { LogSeverity } from '../../../../providers/ror2/logging/LoggerProvider';
 import GameInstructions from '../../instructions/GameInstructions';
 import GameInstructionParser from '../../instructions/GameInstructionParser';
-import TcliBridge from '../../tcli/TcliBridge';
+import TcliBridge from '../../../tcli/TcliBridge';
 
 export default class SteamGameRunner_Darwin extends GameRunnerProvider {
 

@@ -1,19 +1,33 @@
 import path from "../providers/node/path/path";
 import TcliBridge from '../r2mm/tcli/TcliBridge';
+import FsProvider from '../providers/generic/file/FsProvider';
 
 export default class FileUtils {
 
     public static async copyFileOrFolder(source: string, target: string) {
-        await TcliBridge.invoke(['fs', 'copy', source, target]);
+        const stat = await FsProvider.instance.stat(source);
+        if (stat.isFile()) {
+            await FsProvider.instance.copyFile(source, target);
+        } else {
+            await FsProvider.instance.copyFolder(source, target);
+        }
     }
 
     public static async ensureDirectory(dir: string) {
-        await TcliBridge.invoke(['fs', 'mkdirs', dir]);
+        await FsProvider.instance.mkdirs(dir);
     }
 
     public static async emptyDirectory(dir: string) {
-        await TcliBridge.invoke(['fs', 'empty-dir', dir]);
-        return Promise.resolve();
+        const files = await FsProvider.instance.readdir(dir);
+        for (const file of files) {
+            const p = path.join(dir, file);
+            const stat = await FsProvider.instance.stat(p);
+            if (stat.isFile()) {
+                await FsProvider.instance.unlink(p);
+            } else {
+                await this.recursiveRemoveDirectoryIfExists(p);
+            }
+        }
     }
 
     // Obfuscates the Windows username if it's part of the path.
@@ -43,6 +57,8 @@ export default class FileUtils {
     };
 
     public static async recursiveRemoveDirectoryIfExists(dir: string) {
-        await TcliBridge.invoke(['fs', 'rmdir-recursive-if-exists', dir]);
+        if (await FsProvider.instance.exists(dir)) {
+            await FsProvider.instance.rmdir(dir);
+        }
     }
 }

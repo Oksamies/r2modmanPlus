@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import PathResolver from '../../../src/r2mm/manager/PathResolver';
 import FsProvider from '../../../src/providers/generic/file/FsProvider';
 import Profile from '../../../src/model/Profile';
@@ -42,6 +43,15 @@ export default class TestSetup {
 
         const linkProvider = new StubLinkProvider();
         LinkProvider.provide(() => linkProvider);
+
+        vi.mock('../../../src/r2mm/tcli/TcliBridge', () => {
+            return {
+                default: {
+                    invokeWithProgress: vi.fn(),
+                    invoke: vi.fn().mockResolvedValue({ result: 'mocked' })
+                }
+            };
+        });
     }
 
 }

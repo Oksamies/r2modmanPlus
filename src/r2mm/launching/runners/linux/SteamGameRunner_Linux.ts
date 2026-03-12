@@ -17,7 +17,7 @@ import {LaunchType} from '../../../../model/real_enums/launch/LaunchType';
 import InteractionProvider from "../../../../providers/ror2/system/InteractionProvider";
 import PathResolver from "../../../manager/PathResolver";
 import { parse as parseShell } from "shell-quote";
-import TcliBridge from '../../tcli/TcliBridge';
+import TcliBridge from '../../../tcli/TcliBridge';
 
 export default class SteamGameRunner_Linux extends GameRunnerProvider {
 

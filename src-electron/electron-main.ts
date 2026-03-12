@@ -69,7 +69,8 @@ async function createWindow() {
     new Listeners(mainWindow, app);
 
     if (process.env.DEV) {
-        await mainWindow.loadURL(process.env.APP_URL);
+        await mainWindow.webContents.openDevTools();
+    mainWindow.loadURL(process.env.APP_URL);
     } else {
         await mainWindow.loadFile('index.html');
     }
