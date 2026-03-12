@@ -1,7 +1,6 @@
 import Profile, {ImmutableProfile} from '../model/Profile';
 import R2Error from '../model/errors/R2Error';
 import Game from '../model/game/Game';
-import FsProvider from '../providers/generic/file/FsProvider';
 import GameRunnerProvider from '../providers/generic/game/GameRunnerProvider';
 import GameDirectoryResolverProvider from '../providers/ror2/game/GameDirectoryResolverProvider';
 import ManagerSettings from '../r2mm/manager/ManagerSettings';
@@ -14,6 +13,7 @@ import PathResolver from "../r2mm/manager/PathResolver";
 import appWindow from '../providers/node/app/app_window';
 import InteractionProvider from "../providers/ror2/system/InteractionProvider";
 import { TypedEventEmitter } from "./TypedEventEmitter";
+import TcliBridge from '../r2mm/tcli/TcliBridge';
 
 export enum LaunchMode { VANILLA, MODDED };
 
@@ -71,7 +71,7 @@ export const throwIfNoGameDir = async (game: Game): Promise<void> => {
 
     const settings = await ManagerSettings.getSingleton(game);
     const ctcGameDir = settings.getContext().gameSpecific.gameDirectory!;
-    const ctxGameDirExists = await FsProvider.instance.exists(ctcGameDir);
+    const ctxGameDirExists = await TcliBridge.invoke<boolean>(['fs', 'exists', ctcGameDir]);
 
     if (!ctxGameDirExists) {
         throw error;

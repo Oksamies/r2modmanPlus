@@ -2,8 +2,7 @@ import GameDirectoryResolverProvider from '../../../../ror2/game/GameDirectoryRe
 import Game from '../../../../../model/game/Game';
 import R2Error from '../../../../../model/errors/R2Error';
 import ManagerSettings from '../../../../../r2mm/manager/ManagerSettings';
-import FsProvider from '../../../../../providers/generic/file/FsProvider';
-import ChildProcess from '../../../../../providers/node/child_process/child_process';
+import TcliBridge from '../../../../../r2mm/tcli/TcliBridge';
 
 export default class XboxGamePassDirectoryResolver extends GameDirectoryResolverProvider {
 
@@ -14,19 +13,11 @@ export default class XboxGamePassDirectoryResolver extends GameDirectoryResolver
         }
 
         try {
-            const installDirectoryQuery = `get-appxpackage -Name ${game.activePlatform.storeIdentifier} | select -expand InstallLocation`;
-            const queryResult: string = ChildProcess.execSync(`powershell.exe "${installDirectoryQuery}"`).toString().trim();
-            const realInstallLocation = await FsProvider.instance.realpath(queryResult);
-            if (await FsProvider.instance.exists(realInstallLocation)) {
-                return realInstallLocation;
-            }
-            else {
-                throw new Error(realInstallLocation);
-            }
-        } catch (err) {
+            return await TcliBridge.invoke(['system', 'locate-game', 'xbox', game.settingsIdentifier]);
+        } catch (err: any) {
             return new R2Error(
                 `Unable to resolve the ${game.displayName} install folder`,
-                `${err}`,
+                err.message,
                 `Try manually locating the ${game.displayName} install folder through the settings`
             );
         }

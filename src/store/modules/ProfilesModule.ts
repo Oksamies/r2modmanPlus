@@ -1,10 +1,8 @@
-import FileUtils from "../../utils/FileUtils";
 import R2Error from "../../model/errors/R2Error";
 import { ActionTree } from "vuex";
 import { State as RootState } from "../../store";
 import Profile from "../../model/Profile";
-import FsProvider from "../../providers/generic/file/FsProvider";
-import path from "../../providers/node/path/path";
+import TcliBridge from "../../r2mm/tcli/TcliBridge";
 
 interface State {
     profileList: string[];
@@ -39,8 +37,9 @@ export const ProfilesModule = {
 
         async ensureProfileExists({commit, dispatch, rootGetters, state}) {
             const activeProfile: Profile = rootGetters['profile/activeProfile'];
+            const profileList = await TcliBridge.invoke<string[]>(['profile', 'list']);
 
-            if (!(await FsProvider.instance.exists(activeProfile.getProfilePath()))) {
+            if (!profileList.includes(activeProfile.getProfileName())) {
                 await dispatch('profile/updateActiveProfile', 'Default', { root: true });
                 commit(
                     'setProfileList',
@@ -51,12 +50,10 @@ export const ProfilesModule = {
 
         async removeSelectedProfile({rootGetters, state, dispatch, commit}) {
             const activeProfile: Profile = rootGetters['profile/activeProfile'];
-            const path = activeProfile.getProfilePath();
             const profileName = activeProfile.getProfileName();
 
             try {
-                await FileUtils.emptyDirectory(path);
-                await FsProvider.instance.rmdir(path);
+                await TcliBridge.invoke(['profile', 'delete', profileName]);
             } catch (e) {
                 throw R2Error.fromThrownValue(e, 'Error whilst deleting profile from disk');
             }
@@ -82,10 +79,7 @@ export const ProfilesModule = {
             const oldName = activeProfile.getProfileName();
 
             try {
-                await FsProvider.instance.rename(
-                    path.join(Profile.getRootDir(), oldName),
-                    path.join(Profile.getRootDir(), params.newName)
-                );
+                await TcliBridge.invoke(['profile', 'rename', oldName, params.newName]);
             } catch (e) {
                 throw R2Error.fromThrownValue(e, 'Error whilst renaming a profile on disk');
             }
@@ -94,17 +88,14 @@ export const ProfilesModule = {
         },
 
         async updateProfileList({commit, rootGetters}) {
-            const profilesDirectory = Profile.getRootDir();
-            await FileUtils.ensureDirectory(profilesDirectory);
-            let profilesDirectoryContents = await FsProvider.instance.readdir(profilesDirectory);
-            let promises = profilesDirectoryContents.map(async function(file) {
-                const fileStat = await FsProvider.instance.stat(path.join(profilesDirectory, file));
-                return (fileStat.isDirectory() && file.toLowerCase() !== 'default' && file.toLowerCase() !== "_profile_update")
-                    ? file : undefined;
-            });
-            Promise.all(promises).then((profileList) => {
-                commit('setProfileList', ["Default", ...profileList.filter(file => file)].sort());
-            })
+            try {
+                const profileList = await TcliBridge.invoke<string[]>(['profile', 'list']);
+                const filtered = profileList.filter(file => file.toLowerCase() !== 'default' && file.toLowerCase() !== '_profile_update');
+                commit('setProfileList', ["Default", ...filtered].sort());
+            } catch (e) {
+                // If tcli fails, fallback to default
+                commit('setProfileList', ['Default']);
+            }
         },
     }
 }

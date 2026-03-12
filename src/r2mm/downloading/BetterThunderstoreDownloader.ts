@@ -12,6 +12,7 @@ import * as DownloadUtils from '../../utils/DownloadUtils';
 import { DownloadStatusEnum } from '../../model/enums/DownloadStatusEnum';
 import path from '../../providers/node/path/path';
 import Buffer from '../../providers/node/buffer/buffer';
+import TcliBridge from '../tcli/TcliBridge';
 
 export default class BetterThunderstoreDownloader extends ThunderstoreDownloaderProvider {
 
@@ -68,14 +69,22 @@ export default class BetterThunderstoreDownloader extends ThunderstoreDownloader
     }
 
     private async _downloadCombo(combo: ThunderstoreCombo, callback: (downloadedBytes: number, status: DownloadStatusEnum, err: R2Error | null) => void): Promise<AxiosResponse> {
-        return axios.get(combo.getVersion().getDownloadUrl(), {
-            onDownloadProgress: progress => callback(progress.loaded, DownloadStatusEnum.DOWNLOADING, null),
-            responseType: 'arraybuffer',
-            headers: {
-                'Content-Type': 'application/zip',
-                'Access-Control-Allow-Origin': '*'
-            }
-        });
+        // TCLI integration replacing axios
+        const modName = combo.getVersion().getFullName();
+        callback(0, DownloadStatusEnum.DOWNLOADING, null);
+        try {
+            await TcliBridge.invokeWithProgress<any>(['mod', 'download', modName], (progress: any) => {
+                if (progress.status === 'DOWNLOADING' && progress.bytesDownloaded) {
+                    callback(progress.bytesDownloaded, DownloadStatusEnum.DOWNLOADING, null);
+                }
+            });
+            // Mocking AxiosResponse for compatibility with existing flow
+            return { data: new ArrayBuffer(0), status: 200, statusText: 'OK', headers: {}, config: {} } as any;
+        } catch (e: any) {
+            const err = new R2Error('TCLI Download Failed', e.message, null);
+            callback(0, DownloadStatusEnum.FAILED, err);
+            throw err;
+        }
     }
 
     private async _saveDownloadResponse(response: AxiosResponse, combo: ThunderstoreCombo, callback: (downloadedBytes: number, status: DownloadStatusEnum, err: R2Error | null) => void): Promise<void> {

@@ -90,7 +90,7 @@
 
 import InteractionProvider from '../../providers/ror2/system/InteractionProvider';
 import VersionNumber from '../../model/VersionNumber';
-import ZipProvider from '../../providers/generic/zip/ZipProvider';
+import TcliBridge from '../../r2mm/tcli/TcliBridge';
 import ManifestV2 from '../../model/ManifestV2';
 import R2Error from '../../model/errors/R2Error';
 import { ImmutableProfile } from '../../model/Profile';
@@ -168,11 +168,9 @@ async function assumeDefaults() {
     if (fileToImport.value === null) { return }
 
     if (fileToImport.value.endsWith(".zip")) {
-        const entries = await ZipProvider.instance.getEntries(fileToImport.value);
-        if (entries.filter(value => value.entryName === "manifest.json").length === 1) {
-            const manifestContents = await ZipProvider.instance.readFile(fileToImport.value, "manifest.json");
-            if (manifestContents !== null) {
-                const manifestJson: any = JSON.parse(manifestContents.toString().trim());
+        try {
+            const manifestJson: any = await TcliBridge.invoke(['mod', 'inspect-archive', fileToImport.value]);
+            if (manifestJson) {
                 const manifestOrErr = new ManifestV2().makeSafeFromPartial(manifestJson);
                 if (manifestOrErr instanceof R2Error) {
                     // Assume V1. Allow user to correct anything incorrect in case manifest is not Thunderstore valid.
@@ -198,9 +196,11 @@ async function assumeDefaults() {
                     // TODO: Make fields readonly if V2 is provided.
                     return;
                 }
+            } else {
+                console.log("Does not contain manifest");
             }
-        } else {
-            console.log("Does not contain manifest");
+        } catch (e: any) {
+            console.log("Does not contain manifest or error occurred:", e.message);
         }
     }
 

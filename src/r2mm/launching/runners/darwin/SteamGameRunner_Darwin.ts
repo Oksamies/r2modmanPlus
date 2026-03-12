@@ -1,16 +1,12 @@
-import os from "../../../../providers/node/os/os";
-import FsProvider from '../../../../providers/generic/file/FsProvider';
-import path from "../../../../providers/node/path/path";
 import GameRunnerProvider from '../../../../providers/generic/game/GameRunnerProvider';
 import Game from '../../../../model/game/Game';
 import R2Error from '../../../../model/errors/R2Error';
 import Profile from '../../../../model/Profile';
 import ManagerSettings from '../../../manager/ManagerSettings';
-import GameDirectoryResolverProvider from '../../../../providers/ror2/game/GameDirectoryResolverProvider';
 import LoggerProvider, { LogSeverity } from '../../../../providers/ror2/logging/LoggerProvider';
-import ChildProcess from '../../../../providers/node/child_process/child_process';
 import GameInstructions from '../../instructions/GameInstructions';
 import GameInstructionParser from '../../instructions/GameInstructionParser';
+import TcliBridge from '../../tcli/TcliBridge';
 
 export default class SteamGameRunner_Darwin extends GameRunnerProvider {
 
@@ -34,29 +30,13 @@ export default class SteamGameRunner_Darwin extends GameRunnerProvider {
 
     async start(game: Game, args: string[]): Promise<void | R2Error> {
         const settings = await ManagerSettings.getSingleton(game);
-        const steamDir = await GameDirectoryResolverProvider.instance.getSteamDirectory();
-        if(steamDir instanceof R2Error) {
-            return steamDir;
-        }
+        const additionalArgs = settings.getContext().gameSpecific.launchParameters.trim().split(" ").filter(Boolean);
+        const allArgs = [...args, ...additionalArgs];
 
-        LoggerProvider.instance.Log(LogSeverity.INFO, `Steam folder is: ${steamDir}`);
-
-        const steamExecutable = [
-            path.join("/", "Applications", "Steam.app"),
-            path.join(os.homedir(), "Applications", "Steam.app")
-        ].find(async executable => await FsProvider.instance.exists(executable));
-
-        if (steamExecutable === undefined) {
-            return new R2Error("Could not locate the Steam application", "The Steam application must be in either /Applications or ~/Applications",
-                "This should be the default location. If there are others, please let me know.");
-        }
-
-        try{
-            const mappedArgs = args.map(value => `"${value}"`).join(' ');
-            const cmd = `"${steamExecutable}/Contents/MacOS/steam_osx" -applaunch ${game.activePlatform.storeIdentifier} ${mappedArgs} ${settings.getContext().gameSpecific.launchParameters}`;
-            LoggerProvider.instance.Log(LogSeverity.INFO, `Running command: ${cmd}`);
-            await ChildProcess.exec(cmd);
-        } catch(err){
+        try {
+            LoggerProvider.instance.Log(LogSeverity.INFO, `Invoking tcli: launch steam-mac ${game.activePlatform.storeIdentifier} ${allArgs.join(' ')}`);
+            await TcliBridge.invoke(['launch', 'steam-mac', game.activePlatform.storeIdentifier, ...allArgs]);
+        } catch(err) {
             LoggerProvider.instance.Log(LogSeverity.ACTION_STOPPED, 'Error was thrown whilst starting the game');
             LoggerProvider.instance.Log(LogSeverity.ERROR, (err as Error).message);
             throw new R2Error('Error starting Steam', (err as Error).message, 'Ensure that the Steam folder has been set correctly in the settings');

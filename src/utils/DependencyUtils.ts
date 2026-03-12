@@ -3,6 +3,7 @@ import ManifestV2 from "../model/ManifestV2";
 import ThunderstoreCombo from "../model/ThunderstoreCombo";
 import ThunderstoreVersion from "../model/ThunderstoreVersion";
 import { getCombosByDependencyStrings } from '../r2mm/manager/PackageDexieStore';
+import TcliBridge from '../r2mm/tcli/TcliBridge';
 
 export enum InstallMode {
     INSTALL_SPECIFIC = 0,  // Use when installing a single mod or modpack
@@ -98,18 +99,38 @@ export async function getFullDependencyList(
         ));
     }
 
-    sortDependencyOrder(results);
+    await sortDependencyOrder(results);
     return results;
 }
 
-function sortDependencyOrder(deps: ThunderstoreCombo[]) {
-    deps.sort((a, b) => {
-        if (a.getVersion().getDependencies().find(value => value.startsWith(b.getMod().getFullName() + "-"))) {
-            return 1;
-        } else {
-            return -1;
+async function sortDependencyOrder(deps: ThunderstoreCombo[]) {
+    try {
+        const packageIds = deps.map(dep => dep.getVersion().getFullName());
+        const sortedIds = await TcliBridge.invoke<string[]>([
+            'package',
+            'resolve_dependencies',
+            ...packageIds
+        ]);
+        
+        const originalDeps = [...deps];
+        deps.length = 0;
+        
+        for (const sortedId of sortedIds) {
+            const found = originalDeps.find(d => d.getVersion().getFullName() === sortedId);
+            if (found) {
+                deps.push(found);
+            }
         }
-    });
+    } catch (e) {
+        console.warn("Failed to sort via TcliBridge, falling back to local sort", e);
+        deps.sort((a, b) => {
+            if (a.getVersion().getDependencies().find(value => value.startsWith(b.getMod().getFullName() + "-"))) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+    }
 }
 
 async function buildDependencySet(

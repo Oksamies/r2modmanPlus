@@ -21,6 +21,7 @@ import { InstallArgs, PackageInstaller } from "../../../installers/PackageInstal
 import { InstallRuleInstaller } from "../../../installers/InstallRuleInstaller";
 import { ReturnOfModdingPluginInstaller } from "../../../installers/ReturnOfModdingInstaller";
 import { TrackingMethod } from '../../../model/schema/ThunderstoreSchema';
+import TcliBridge from '../../../r2mm/tcli/TcliBridge';
 
 
 export default class GenericProfileInstaller extends ProfileInstallerProvider {
@@ -151,30 +152,12 @@ export default class GenericProfileInstaller extends ProfileInstallerProvider {
     }
 
     async installMod(mod: ManifestV2, profile: ImmutableProfile): Promise<R2Error | null> {
-        const args = this.getInstallArgs(mod, profile);
-
-        // Installation logic for mod loaders.
-        const modLoader = this.getModLoader(mod);
-
-        if (modLoader !== undefined) {
-            return this.installModLoader(modLoader, args);
+        try {
+            await TcliBridge.invoke(['install', 'mod', mod.getName(), profile.getProfileName()]);
+            return null;
+        } catch (e) {
+            return R2Error.fromThrownValue(e);
         }
-
-        // Installation logic for mods for games that use "plugins",
-        // i.e. the newer approach for defining installation logic.
-        const pluginInstaller = getPluginInstaller(GameManager.activeGame.packageLoader);
-
-        if (pluginInstaller !== null) {
-            try {
-                await pluginInstaller.install(args);
-                return Promise.resolve(null);
-            } catch (e) {
-                return Promise.resolve(R2Error.fromThrownValue(e));
-            }
-        }
-
-        // Revert to legacy install behavior.
-        return this.installForManifestV2(args);
     }
 
     private getInstallArgs(mod: ManifestV2, profile: ImmutableProfile): InstallArgs {

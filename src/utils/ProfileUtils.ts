@@ -1,6 +1,4 @@
-import path from "../providers/node/path/path";
 import * as yaml from "yaml";
-import FileUtils from "./FileUtils";
 import R2Error, { throwForR2Error } from "../model/errors/R2Error";
 import ExportFormat from "../model/exports/ExportFormat";
 import ExportMod from "../model/exports/ExportMod";
@@ -9,11 +7,10 @@ import ManifestV2 from "../model/ManifestV2";
 import Profile, { ImmutableProfile } from "../model/Profile";
 import ThunderstoreCombo from "../model/ThunderstoreCombo";
 import VersionNumber from "../model/VersionNumber";
-import FsProvider from "../providers/generic/file/FsProvider";
-import ZipProvider from "../providers/generic/zip/ZipProvider";
 import ProfileInstallerProvider from "../providers/ror2/installing/ProfileInstallerProvider";
 import * as PackageDb from '../r2mm/manager/PackageDexieStore';
 import ProfileModList from "../r2mm/mods/ProfileModList";
+import TcliBridge from "../r2mm/tcli/TcliBridge";
 
 export async function exportModsToCombos(
     exportMods: ExportMod[],
@@ -39,23 +36,8 @@ async function extractConfigsToImportedProfile(
     profileName: string,
     progressCallback: (status: string) => void
 ) {
-    const zipEntries = await ZipProvider.instance.getEntries(file);
-    const excludedFiles = ["export.r2x", "mods.yml"];
-
-    for (const [index, entry] of zipEntries.entries()) {
-        if (!excludedFiles.includes(entry.entryName.toLowerCase())) {
-            let outputPath = path.join(Profile.getRootDir(), profileName);
-
-            if (entry.entryName.startsWith('config/') || entry.entryName.startsWith("config\\")) {
-                outputPath = path.join(outputPath, 'BepInEx');
-            }
-
-            await ZipProvider.instance.extractEntryTo(file, entry.entryName, outputPath);
-        }
-
-        const progress = Math.floor(((index + 1) / zipEntries.length) * 100);
-        progressCallback(`Copying configs to profile: ${progress}%`);
-    }
+    progressCallback("Extracting configs from archive...");
+    await TcliBridge.invoke(['profile', 'import-archive', profileName, file]);
 }
 
 /**
@@ -195,7 +177,7 @@ export async function populateImportedProfile(
 
     if (isUpdate) {
         progressCallback('Cleaning up...');
-        await FileUtils.recursiveRemoveDirectoryIfExists(profile.getProfilePath());
+        await TcliBridge.invoke(['profile', 'delete', profile.getProfileName()]).catch(() => {});
     }
 
     try {
@@ -203,33 +185,28 @@ export async function populateImportedProfile(
         await installModsToProfile(comboList, profile, disabledMods, progressCallback);
         await extractConfigsToImportedProfile(zipPath, profile.getProfileName(), progressCallback);
     } catch (e) {
-        await FileUtils.recursiveRemoveDirectoryIfExists(profile.getProfilePath());
+        await TcliBridge.invoke(['profile', 'delete', profile.getProfileName()]).catch(() => {});
         throw e;
     }
 
     if (isUpdate) {
         progressCallback('Applying changes to updated profile...');
         const targetProfile = new ImmutableProfile(profileName);
-        await FileUtils.recursiveRemoveDirectoryIfExists(targetProfile.getProfilePath());
-        await FsProvider.instance.rename(profile.getProfilePath(), targetProfile.getProfilePath());
+        await TcliBridge.invoke(['profile', 'delete', targetProfile.getProfileName()]).catch(() => {});
+        await TcliBridge.invoke(['profile', 'rename', profile.getProfileName(), targetProfile.getProfileName()]);
     }
 }
 
 export async function readProfileFile(file: string): Promise<string> {
-    let read: string | null | undefined;
-    if (file.endsWith('.r2x')) {
-        read = (await FsProvider.instance.readFile(file)).toString();
-    } else if (file.endsWith('.r2z')) {
-        await ZipProvider.instance.readFile(file, "export.r2x")
-            .then((value) => { read = value ? value.toString() : null; })
-            .catch(() => { read = null });
-    }
-
-    if (!read) {
+    try {
+        const read = await TcliBridge.invoke<string>(['profile', 'read-export', file]);
+        if (!read) throw new Error("Empty contents");
+        return read;
+    } catch (e) {
         throw new R2Error(
             'Error when reading file contents',
-            'Reading the .r2x file contents failed. The contents might be empty or corrupted.',
+            'Reading the .r2x or .r2z file contents failed. The contents might be empty or corrupted.',
+            R2Error.fromThrownValue(e).message
         );
     }
-    return read;
 }

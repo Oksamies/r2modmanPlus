@@ -87,7 +87,6 @@ import { ExpandableCard, Hero } from '../all';
 import { SortConfigFile } from '../../model/real_enums/sort/SortConfigFile';
 import { SortDirection } from '../../model/real_enums/sort/SortDirection';
 import ConfigSort from '../../r2mm/configs/ConfigSort';
-import FsProvider from '../../providers/generic/file/FsProvider';
 import ManagerInformation from '../../_managerinf/ManagerInformation';
 import LinkProvider from '../../providers/components/LinkProvider';
 import ProfileModList from '../../r2mm/mods/ProfileModList';
@@ -95,6 +94,7 @@ import { computed, onMounted, ref, watch } from 'vue';
 import { getStore } from '../../providers/generic/store/StoreProvider';
 import { State } from '../../store';
 import path from '../../providers/node/path/path';
+import TcliBridge from '../../r2mm/tcli/TcliBridge';
 
 const store = getStore<State>();
 
@@ -132,7 +132,6 @@ const sortedConfigFiles = computed(() => {
 });
 
 onMounted(async () => {
-    const fs = FsProvider.instance;
     const configLocation = store.getters['profile/activeProfile'].getProfilePath();
     const tree = await FileTree.buildFromLocation(configLocation);
     if (tree instanceof R2Error) {
@@ -152,16 +151,16 @@ onMounted(async () => {
     const supportedExtensions = ProfileModList.SUPPORTED_CONFIG_FILE_EXTENSIONS;
     for (const file of files) {
         if (supportedExtensions.includes(path.extname(file).toLowerCase())) {
-            const fileStat = await fs.lstat(file);
-            configFiles.value.push(new ConfigFile(file.substring(configLocation.length + 1), file, fileStat.mtime));
+            const mtime = await TcliBridge.invoke<Date>(['config', 'lstat-mtime', file]);
+            configFiles.value.push(new ConfigFile(file.substring(configLocation.length + 1), file, new Date(mtime)));
         }
     }
 
     // HACK: Force the UE4SS-settings.ini file for shimloader mod installs to be visible.
     const ue4ssSettingsPath = tree.getFiles().find(x => x.toLowerCase().endsWith('ue4ss-settings.ini'));
     if (ue4ssSettingsPath) {
-        const lstat = await fs.lstat(ue4ssSettingsPath);
-        configFiles.value.push(new ConfigFile('UE4SS-settings.ini', ue4ssSettingsPath, lstat.mtime));
+        const mtime = await TcliBridge.invoke<Date>(['config', 'lstat-mtime', ue4ssSettingsPath]);
+        configFiles.value.push(new ConfigFile('UE4SS-settings.ini', ue4ssSettingsPath, new Date(mtime)));
     }
 
     shownConfigFiles.value = [...configFiles.value];
@@ -169,9 +168,8 @@ onMounted(async () => {
 });
 
 async function deleteConfig(file: ConfigFile) {
-    const fs = FsProvider.instance;
     try {
-        await fs.unlink(file.getPath());
+        await TcliBridge.invoke(['config', 'delete', file.getPath()]);
         configFiles.value = configFiles.value.filter(value => value.getName() !== file.getName());
         updateShownConfigFiles(configFiles.value as ConfigFile[]);
     } catch (e) {

@@ -1,33 +1,18 @@
-import FsProvider from '../providers/generic/file/FsProvider';
 import path from "../providers/node/path/path";
+import TcliBridge from '../r2mm/tcli/TcliBridge';
 
 export default class FileUtils {
 
     public static async copyFileOrFolder(source: string, target: string) {
-        if ((await FsProvider.instance.stat(source)).isFile()) {
-            await FsProvider.instance.copyFile(source, target);
-        } else {
-            await FsProvider.instance.copyFolder(source, target);
-        }
+        await TcliBridge.invoke(['fs', 'copy', source, target]);
     }
 
     public static async ensureDirectory(dir: string) {
-        const fs = FsProvider.instance;
-        await fs.mkdirs(dir);
+        await TcliBridge.invoke(['fs', 'mkdirs', dir]);
     }
 
     public static async emptyDirectory(dir: string) {
-        const fs = FsProvider.instance;
-        const files = await fs.readdir(dir);
-        for (const filename of files) {
-            const file = path.join(dir, filename);
-            if ((await fs.lstat(file)).isDirectory()) {
-                await this.emptyDirectory(file);
-                await fs.rmdir(file);
-            } else {
-                await fs.unlink(file);
-            }
-        }
+        await TcliBridge.invoke(['fs', 'empty-dir', dir]);
         return Promise.resolve();
     }
 
@@ -58,13 +43,6 @@ export default class FileUtils {
     };
 
     public static async recursiveRemoveDirectoryIfExists(dir: string) {
-        const fs = FsProvider.instance;
-
-        if (!(await fs.exists(dir)) || !(await fs.lstat(dir)).isDirectory()) {
-            return;
-        }
-
-        await FileUtils.emptyDirectory(dir);
-        await fs.rmdir(dir);
+        await TcliBridge.invoke(['fs', 'rmdir-recursive-if-exists', dir]);
     }
 }

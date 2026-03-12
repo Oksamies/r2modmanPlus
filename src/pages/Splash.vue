@@ -120,21 +120,17 @@
 <script lang='ts' setup>
 import { ExternalLink, Hero, Progress } from '../components/all';
 import Game from '../model/game/Game';
-import FsProvider from '../providers/generic/file/FsProvider';
 import PathResolver from '../r2mm/manager/PathResolver';
 import { computed, onMounted, ref } from 'vue';
 import { State } from '../store';
 import { getStore } from '../providers/generic/store/StoreProvider';
 import { useRouter } from 'vue-router';
 import { useSplashComposable } from '../components/composables/SplashComposable';
-import path from '../providers/node/path/path';
-import FileUtils from '../utils/FileUtils';
 import { areWrapperArgumentsProvided, getDeterminedLaunchType, isManagerRunningOnFlatpak } from '../utils/LaunchUtils';
 import appWindow from '../providers/node/app/app_window';
-import Buffer from '../providers/node/buffer/buffer';
-import ProtocolProvider from '../providers/generic/protocol/ProtocolProvider';
 import ManagerSettings from '../r2mm/manager/ManagerSettings';
 import { LaunchType } from '../model/real_enums/launch/LaunchType';
+import TcliBridge from '../r2mm/tcli/TcliBridge';
 
 const store = getStore<State>();
 const router = useRouter();
@@ -154,9 +150,9 @@ async function moveToNextScreen() {
     if (appWindow.getPlatform() === 'linux') {
         const activeGame: Game = store.state.activeGame;
         const settings = await ManagerSettings.getSingleton(activeGame);
-        await ensureWrapperInGameFolder('linux_wrapper.sh');
-        await ensureWrapperInGameFolder('steam_executable_launch.sh');
-        await ensureWrapperInGameFolder('web_start_wrapper.sh');
+        
+        await TcliBridge.invoke(['system', 'setup-wrappers', PathResolver.MOD_ROOT]);
+
         const gameIsProton = await getDeterminedLaunchType(activeGame, settings.getLaunchType() || LaunchType.AUTO) === LaunchType.PROTON;
         if (!gameIsProton || await isManagerRunningOnFlatpak()) {
             if (!(await areWrapperArgumentsProvided(activeGame))) {
@@ -164,36 +160,10 @@ async function moveToNextScreen() {
             }
         }
     } else if (appWindow.getPlatform() === 'darwin') {
-        await ensureWrapperInGameFolder('linux_wrapper.sh');
+        await TcliBridge.invoke(['system', 'setup-wrappers', PathResolver.MOD_ROOT]);
         return router.push({name: 'linux'});
     }
     return router.push({name: 'profiles'});
-}
-
-type WrapperScript = 'linux_wrapper.sh' | 'steam_executable_launch.sh' | 'web_start_wrapper.sh';
-
-async function ensureWrapperInGameFolder(wrapperName: WrapperScript) {
-    const staticsDirectory = window.app.getStaticsDirectory();
-    const activeGame: Game = store.state.activeGame;
-    console.log(`Ensuring wrapper for current game ${activeGame.displayName} in ${path.join(PathResolver.MOD_ROOT, wrapperName)}`);
-    try {
-        await FsProvider.instance.stat(path.join(PathResolver.MOD_ROOT, wrapperName));
-        const oldBuf = (await FsProvider.instance.readFile(path.join(PathResolver.MOD_ROOT, wrapperName)));
-        const newBuf = (await FsProvider.instance.readFile(path.join(staticsDirectory, wrapperName)));
-        if (!oldBuf.equals(newBuf)) {
-            throw new Error('Outdated buffer');
-        }
-    } catch (_) {
-        await FileUtils.ensureDirectory(PathResolver.MOD_ROOT);
-        if (await FsProvider.instance.exists(path.join(PathResolver.MOD_ROOT, wrapperName))) {
-            await FsProvider.instance.unlink(path.join(PathResolver.MOD_ROOT, wrapperName));
-        }
-        const wrapperFileResult = await fetch(ProtocolProvider.getPublicAssetUrl(`/${wrapperName}`)).then(res => res.arrayBuffer());
-        const wrapperFileContent = Buffer.from(wrapperFileResult);
-        await FsProvider.instance.writeFile(path.join(PathResolver.MOD_ROOT, wrapperName), wrapperFileContent);
-        await FsProvider.instance.writeFile(path.join(PathResolver.MOD_ROOT, wrapperName), wrapperFileContent);
-    }
-    await FsProvider.instance.chmod(path.join(PathResolver.MOD_ROOT, wrapperName), 0o755);
 }
 
 onMounted(async () => {

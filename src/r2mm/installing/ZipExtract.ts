@@ -2,7 +2,7 @@ import FileWriteError from '../../model/errors/FileWriteError';
 import FsProvider from '../../providers/generic/file/FsProvider';
 import R2Error from '../../model/errors/R2Error';
 import FileUtils from '../../utils/FileUtils';
-import ZipProvider from '../../providers/generic/zip/ZipProvider';
+import TcliBridge from '../tcli/TcliBridge';
 import path from '../../providers/node/path/path';
 
 export default class ZipExtract {
@@ -45,7 +45,7 @@ export default class ZipExtract {
 
     public static async extractOnly(zip: string, outputFolder: string): Promise<void> {
         try {
-            await ZipProvider.instance.extractAllTo(zip, outputFolder);
+            await TcliBridge.invoke(['archive', 'extract', zip, outputFolder]);
         } catch (e) {
             console.log("extractOnly failed:", e);
             throw R2Error.fromThrownValue(e, `Extracting ${zip} failed`);

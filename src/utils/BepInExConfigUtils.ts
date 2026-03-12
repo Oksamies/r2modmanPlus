@@ -1,22 +1,20 @@
 import ConfigLine from '../model/file/ConfigLine';
-import FsProvider from '../providers/generic/file/FsProvider';
 import ConfigFile from '../model/file/ConfigFile';
 import path from '../providers/node/path/path';
+import TcliBridge from '../r2mm/tcli/TcliBridge';
 
 export default class BepInExConfigUtils {
 
     public static async getConfigFileInstance(file: string): Promise<ConfigFile> {
-        const fs = FsProvider.instance;
-        const fileStat = await fs.lstat(file);
+        const mtime = await TcliBridge.invoke<Date>(['config', 'lstat-mtime', file]);
         const filePathSplit = file.split(path.sep);
         filePathSplit.pop();
-        return new ConfigFile(file.substring(path.join(...filePathSplit).length + 1, file.length - 4), file, fileStat.mtime);
+        return new ConfigFile(file.substring(path.join(...filePathSplit).length + 1, file.length - 4), file, new Date(mtime));
     }
 
     public static async getBepInExConfigBreakdown(file: string): Promise<{ [section: string]: { [variable: string]: ConfigLine } }> {
-        const fs = FsProvider.instance;
         const configFile = await this.getConfigFileInstance(file);
-        const fileText = (await fs.readFile(configFile.getPath())).toString();
+        const fileText = await TcliBridge.invoke<string>(['config', 'read', configFile.getPath()]);
 
         // Find all variables offered within config script.
         const dumpedConfigVariables: { [section: string]: { [variable: string]: ConfigLine } } = {};
@@ -52,7 +50,6 @@ export default class BepInExConfigUtils {
     }
 
     public static async updateBepInExConfigFile(file: string, originalText: string, data: { [section: string]: { [variable: string]: ConfigLine } }) {
-        const fs = FsProvider.instance;
         let builtString = '';
         let section = 'root';
         originalText.split('\n').forEach((line: string) => {
@@ -67,7 +64,7 @@ export default class BepInExConfigUtils {
             }
         });
         const configFile = await this.getConfigFileInstance(file);
-        await fs.writeFile(configFile.getPath(), builtString.trim());
+        await TcliBridge.invoke(['config', 'write', configFile.getPath(), builtString.trim()]);
     }
 
 }

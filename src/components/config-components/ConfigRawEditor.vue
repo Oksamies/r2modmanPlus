@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import QuillEditor from "../QuillEditor.vue";
 import {ref} from "vue";
-import FsProvider from "../../providers/generic/file/FsProvider";
+import TcliBridge from "../../r2mm/tcli/TcliBridge";
 
 export type ConfigRawEditorProps = {
     filePath: string;
@@ -27,8 +27,8 @@ const emits = defineEmits<{
 
 const fileText = ref<string>("");
 
-FsProvider.instance.readFile(props.filePath)
-    .then(buffer => fileText.value = buffer.toString());
+TcliBridge.invoke(["config", "read", props.filePath])
+    .then(buffer => fileText.value = buffer as string);
 
 function updateFreeText(text: string) {
     fileText.value = text;
@@ -40,7 +40,7 @@ function quillEditorValueUpdated(value: string) {
 }
 
 async function save() {
-    await FsProvider.instance.writeFile(props.filePath, fileText.value)
+    await TcliBridge.invoke(["config", "write", props.filePath, fileText.value]);
     emits('changed');
 }
 

@@ -135,7 +135,6 @@ import ThemeManager from '../r2mm/manager/ThemeManager';
 import { DataFolderProvider } from '../providers/ror2/system/DataFolderProvider';
 import InteractionProvider from '../providers/ror2/system/InteractionProvider';
 import os from '../providers/node/os/os';
-import FsProvider from '../providers/generic/file/FsProvider';
 import CacheUtil from '../r2mm/mods/CacheUtil';
 import LinkProvider from '../providers/components/LinkProvider';
 import GameRunnerProvider from '../providers/generic/game/GameRunnerProvider';
@@ -156,6 +155,7 @@ import path from '../providers/node/path/path';
 import LaunchTypeModal from "../components/modals/launch-type/LaunchTypeModal.vue";
 import appWindow from '../providers/node/app/app_window';
 import GameInstructionParser from "../r2mm/launching/instructions/GameInstructionParser";
+import TcliBridge from '../r2mm/tcli/TcliBridge';
 
 const store = getStore<State>();
 const router = useRouter();
@@ -232,7 +232,7 @@ function changeGameInstallDirectory() {
             try {
                 const containsGameExecutable = activeGame.value.exeName.find(exeName => path.basename(files[0]).toLowerCase() === exeName.toLowerCase()) !== undefined
                 if (containsGameExecutable) {
-                    await settings.value.setGameDirectory(path.dirname(await FsProvider.instance.realpath(files[0])));
+                    await settings.value.setGameDirectory(path.dirname(await TcliBridge.invoke<string>(['system', 'fs', 'realpath', files[0]])));
                 } else {
                     showRor2IncorrectDirectoryModal.value = true;
                 }
@@ -256,7 +256,7 @@ function changeGameInstallDirectoryGamePass() {
             try {
                 const containsGameExecutable = (path.basename(files[0]).toLowerCase() === "gamelaunchhelper.exe");
                 if (containsGameExecutable) {
-                    await settings.value.setGameDirectory(path.dirname(await FsProvider.instance.realpath(files[0])));
+                    await settings.value.setGameDirectory(path.dirname(await TcliBridge.invoke<string>(['system', 'fs', 'realpath', files[0]])));
                 } else {
                     throw new Error("The selected executable is not gamelaunchhelper.exe");
                 }
@@ -266,22 +266,6 @@ function changeGameInstallDirectoryGamePass() {
             }
         }
     });
-}
-
-function computeDefaultSteamDirectory(): string {
-    switch(appWindow.getPlatform()){
-        case 'win32':
-            return path.resolve(
-                process.env['ProgramFiles(x86)'] || process.env.PROGRAMFILES || 'C:\\Program Files (x86)',
-                'Steam'
-            );
-        case 'linux':
-            return path.resolve(os.homedir(), '.local', 'share', 'Steam');
-        case 'darwin':
-            return path.resolve(os.homedir(), 'Library', 'Application Support', 'Steam');
-        default:
-            return '';
-    }
 }
 
 async function checkIfSteamExecutableIsValid(file: string): Promise<boolean> {
@@ -297,8 +281,8 @@ async function checkIfSteamExecutableIsValid(file: string): Promise<boolean> {
     }
 }
 
-function changeSteamDirectory() {
-    const steamDir: string = settings.value.getContext().global.steamDirectory || computeDefaultSteamDirectory();
+async function changeSteamDirectory() {
+    const steamDir: string = settings.value.getContext().global.steamDirectory || await TcliBridge.invoke<string>(['system', 'fs', 'resolve-steam-dir']);
     InteractionProvider.instance.selectFile({
         title: 'Locate Steam Executable',
         defaultPath: steamDir,
@@ -308,7 +292,7 @@ function changeSteamDirectory() {
         if (files.length === 1) {
             try {
                 if (await checkIfSteamExecutableIsValid(files[0])) {
-                    await settings.value.setSteamDirectory(path.dirname(await FsProvider.instance.realpath(files[0])));
+                    await settings.value.setSteamDirectory(path.dirname(await TcliBridge.invoke<string>(['system', 'fs', 'realpath', files[0]])));
                 } else {
                     showSteamIncorrectDirectoryModal.value = true;
                 }
@@ -375,30 +359,8 @@ function updateLaunchParameters() {
 }
 
 async function copyLogToClipboard() {
-    const fs = FsProvider.instance;
-    let logOutputPath = "";
-    switch (activeGame.value.packageLoader) {
-        case PackageLoader.BEPINEX:
-        case PackageLoader.BEPISLOADER:
-            logOutputPath = path.join(profile.value.getProfilePath(), "BepInEx", "LogOutput.log");
-            break;
-        case PackageLoader.MELONLOADER:
-            logOutputPath = path.join(profile.value.getProfilePath(), "MelonLoader", "Latest.log");
-            break;
-        case PackageLoader.RETURN_OF_MODDING:
-            logOutputPath = path.join(profile.value.getProfilePath(), "ReturnOfModding", "LogOutput.log");
-            break;
-        case PackageLoader.GDWEAVE:
-            logOutputPath = path.join(profile.value.getProfilePath(), "GDWeave", "GDWeave.log");
-            break;
-        case PackageLoader.UMM:
-            logOutputPath = path.join(profile.value.getProfilePath(), "UMM", "Core", "Log.txt");
-            break;
-        case PackageLoader.RIVET:
-            logOutputPath = path.join(profile.value.getProfilePath(), "Rivet", "RivetLoader.log");
-            break;
-    }
-    const text = (await fs.readFile(logOutputPath)).toString();
+    const logOutputPath = await TcliBridge.invoke<string>(['system', 'fs', 'get-log-path', profile.value.getProfilePath()]);
+    const text = await TcliBridge.invoke<string>(['system', 'fs', 'read', logOutputPath]);
     if (text.length >= 1992) {
         InteractionProvider.instance.copyToClipboard(text);
     } else {

@@ -17,6 +17,7 @@ import {LaunchType} from '../../../../model/real_enums/launch/LaunchType';
 import InteractionProvider from "../../../../providers/ror2/system/InteractionProvider";
 import PathResolver from "../../../manager/PathResolver";
 import { parse as parseShell } from "shell-quote";
+import TcliBridge from '../../tcli/TcliBridge';
 
 export default class SteamGameRunner_Linux extends GameRunnerProvider {
 
@@ -29,24 +30,23 @@ export default class SteamGameRunner_Linux extends GameRunnerProvider {
         const settings = await ManagerSettings.getSingleton(game);
         const isProton = await getDeterminedLaunchType(game, settings.getLaunchType() || LaunchType.AUTO) === LaunchType.PROTON;
 
+        if (isProton) {
+            try {
+                await TcliBridge.invoke(['launch', 'steam-linux', game.settingsIdentifier, profile.getProfileName()]);
+                return;
+            } catch (err) {
+                const e = err as Error;
+                return new R2Error("Failed to start modded via tcli", e.message, "Check the tcli logs or report this issue.");
+            }
+        }
+
         let proxyArgs: Record<string, string> = {};
 
-        if (isProton) {
-            // BepInEx uses winhttp, GDWeave uses winmm. More can be added later.
-            const proxyDll = game.packageLoader == PackageLoader.GDWEAVE ? "winmm" : "winhttp";
-            const promise = await this.ensureWineWillLoadDllOverride(game, proxyDll);
-            if (promise instanceof R2Error) {
-                // We no longer want to display an error as launch args should be set correctly.
-                // A console error still allows it to be discoverable.
-                console.error(promise);
-            }
-            proxyArgs['WINEDLLOVERRIDES'] = `"${proxyDll}=n,b"`
-        } else {
-            // If sh files aren't executable then the wrapper will fail.
-            const shFiles = (await FsProvider.instance.readdir(await FsProvider.instance.realpath(Profile.getActiveProfile().getProfilePath())))
-                .filter(value => value.endsWith(".sh"));
+        // If sh files aren't executable then the wrapper will fail.
+        const shFiles = (await FsProvider.instance.readdir(await FsProvider.instance.realpath(Profile.getActiveProfile().getProfilePath())))
+            .filter(value => value.endsWith(".sh"));
 
-            try {
+        try {
                 for (const shFile of shFiles) {
                     await FsProvider.instance.chmod(await FsProvider.instance.realpath(Profile.getActiveProfile().joinToProfilePath(shFile)), 0o755);
                 }
@@ -54,7 +54,6 @@ export default class SteamGameRunner_Linux extends GameRunnerProvider {
                 const err: Error = e as Error;
                 return new R2Error("Failed to make sh file executable", err.message, "You may need to run the manager with elevated privileges.");
             }
-        }
 
         const args = await this.getGameArguments(game, profile);
         if (args instanceof R2Error) {
@@ -147,67 +146,5 @@ export default class SteamGameRunner_Linux extends GameRunnerProvider {
             LoggerProvider.instance.Log(LogSeverity.ERROR, (err as Error).message);
             throw new R2Error('Error starting Steam', (err as Error).message, 'Ensure that the Steam folder has been set correctly in the settings');
         }
-    }
-
-    private async ensureWineWillLoadDllOverride(game: Game, proxyDll: string): Promise<void | R2Error>{
-        const fs = FsProvider.instance;
-        const compatDataDir = await (GameDirectoryResolverProvider.instance as LinuxGameDirectoryResolver).getCompatDataDirectory(game);
-        if(compatDataDir instanceof R2Error)
-            return compatDataDir;
-        const userReg = path.join(compatDataDir, 'pfx', 'user.reg');
-        const userRegData = (await fs.readFile(userReg)).toString();
-        const ensuredUserRegData = this.regAddInSection(
-            userRegData,
-            "[Software\\\\Wine\\\\DllOverrides]",
-            proxyDll,
-            "native,builtin"
-        );
-
-        if(userRegData !== ensuredUserRegData){
-            await fs.copyFile(userReg, path.join(path.dirname(userReg), 'user.reg.bak'));
-            await fs.writeFile(userReg, ensuredUserRegData);
-        }
-    }
-
-    private regAddInSection(reg: string, section: string, key: string, value: string): string {
-        /*
-            Example section
-            [header]                // our section variable
-            #time=...               // timestamp
-            "key"="value"
-
-            It's ended with two newlines (/n/n)
-        */
-        let split = reg.split("\n");
-
-        let begin = 0;
-        // Get section begin
-        for (let index = 0; index < split.length; index++) {
-            if (split[index]!.startsWith(section)) {
-                begin = index + 2; // We need to skip the timestamp line
-                break;
-            }
-        }
-
-        // Get end
-        let end = 0;
-        for (let index = begin; index < split.length; index++) {
-            if (split[index]!.length == 0) {
-                end = index;
-                break;
-            }
-        }
-
-        // Check for key and fix it eventually, then return
-        for (let index = begin; index < end; index++) {
-            if (split[index]!.startsWith(`"${key}"`)) {
-                split[index] = `"${key}"="${value}"`;
-                return split.join("\n");
-            }
-        }
-
-        // Append key and return
-        split.splice(end, 0, `"${key}"="${value}"`);
-        return split.join("\n");
     }
 }
